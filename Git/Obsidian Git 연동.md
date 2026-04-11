@@ -16,7 +16,10 @@ git branch -M main
 1.  **토큰 발급:** [GitHub Settings] > [Developer settings] > [Personal access tokens] > **[Tokens (classic)]**에서 토큰을 생성합니다. (`repo` 권한에 반드시 체크하세요.)
 	
 2.  **원격 URL 수정:** 아래 명령어를 입력하여 URL에 토큰을 직접 포함시킵니다.
-    git remote set-url origin https://<발급받은_토큰>@github.com/<사용자명>/<레포지토리명>.git
+	형식: git remote add origin https://<토큰>@github.com/<사용자명>/<레포지토리명>.git
+	git remote add origin https://<발급받은_토큰>@github.com/<사용자명>/<레포지토리명>.git
+	cf.)
+	git remote set-url origin https://<발급받은_토큰>@github.com/<사용자명>/<레포지토리명>.git
 
 3.  **다시 시도:**
     git push -u origin main
