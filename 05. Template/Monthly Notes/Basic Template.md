@@ -3,7 +3,7 @@
 const YEAR           = 2026;
 const MONTH          = 4;
 const DAILY_FOLDER   = "03. Daily Notes/2026년/4월";  // 실제 폴더 경로
-const TARGET_SECTION = "## 3.  저녁 공부";
+const TARGET_SECTION = "## 3.  학습 계획";
 // ──────────────────────────────────────────────────
 
 const dayNames = ["일","월","화","수","목","금","토"];

@@ -1,10 +1,10 @@
-- [ ] git fetch
-- [ ] git reset
-- [ ] git rebase
+- [x] git fetch
+- [x] git reset
+- [x] git rebase
 - [ ] git clean
-- [ ] git merge
-- [ ] git rm
-- [ ] git stash
+- [x] git merge
+- [x] git rm
+- [x] git stash
 - [ ] git worktree
 - [x] git 상태
 - [x] git 영역
