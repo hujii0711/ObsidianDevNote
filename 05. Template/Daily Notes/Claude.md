@@ -13,7 +13,6 @@ date: {{date:YYYY-MM-DD}} day: {{date:dddd}} week: "W{{date:ww}}" tags:
 > [!quote] 오늘의 한마디 _여기에 오늘의 명언이나 다짐을 적어보세요._
 
 ---
-
 ## 🌅 오늘의 시작
 
 ### 🎯 오늘의 핵심 목표 (Top 3)
