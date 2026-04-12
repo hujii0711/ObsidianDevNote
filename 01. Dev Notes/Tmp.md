@@ -1,0 +1,3 @@
+- git: --set-upstream 과--set-url 차이
+- obsidian: 속성, 태그, 백링크, 나가는 링크 활용법
+- 
