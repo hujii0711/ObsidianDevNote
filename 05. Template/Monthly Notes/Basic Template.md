@@ -1,10 +1,150 @@
+---
+year: 2026
+month: 5
+---
+
+```dataviewjs
+// ─── 월간 달력 그리드 ─────────────────────────────
+const fm = dv.current().file.frontmatter || {};
+const fname = dv.current().file.name;
+const fnMatch = fname.match(/(\d{4})[-년\s]*\s*(\d{1,2})/);
+const now = new Date();
+const YEAR  = Number(fm.year)  || (fnMatch && Number(fnMatch[1])) || now.getFullYear();
+const MONTH = Number(fm.month) || (fnMatch && Number(fnMatch[2])) || (now.getMonth() + 1);
+
+const dayNames = ["일","월","화","수","목","금","토"];
+const firstWeekday = new Date(YEAR, MONTH - 1, 1).getDay();
+const lastDate = new Date(YEAR, MONTH, 0).getDate();
+const today = new Date();
+
+const cells = [];
+for (let i = 0; i < firstWeekday; i++) cells.push(null);
+for (let d = 1; d <= lastDate; d++) cells.push(d);
+while (cells.length % 7 !== 0) cells.push(null);
+
+const isDark = document.body.classList.contains("theme-dark");
+const gh = isDark ? {
+  border: "#30363d", bg: "#0d1117", headerBg: "#161b22",
+  text: "#e6edf3", muted: "#7d8590", rowBorder: "#21262d",
+  hover: "#161b22", todayBg: "#1f6feb", todayText: "#ffffff",
+  sun: "#f85149", sat: "#58a6ff"
+} : {
+  border: "#d0d7de", bg: "#ffffff", headerBg: "#f6f8fa",
+  text: "#1f2328", muted: "#656d76", rowBorder: "#eaeef2",
+  hover: "#f6f8fa", todayBg: "#0969da", todayText: "#ffffff",
+  sun: "#cf222e", sat: "#0969da"
+};
+
+const container = dv.el("div", "");
+const style = document.createElement("style");
+style.textContent = `
+  .cal-wrap {
+    font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+    border: 1px solid ${gh.border}; border-radius: 6px; overflow: hidden;
+    background: ${gh.bg}; margin-bottom: 16px;
+  }
+  .cal-title {
+    font-size: 14px; font-weight: 600;
+    padding: 12px 16px; background: ${gh.headerBg};
+    border-bottom: 1px solid ${gh.border}; color: ${gh.text};
+  }
+  .cal-table { width: 100%; border-collapse: collapse; table-layout: fixed; background: ${gh.bg}; }
+  .cal-table th {
+    background: ${gh.headerBg}; color: ${gh.muted};
+    font-size: 12px; font-weight: 600;
+    padding: 8px 0; text-align: center;
+    border-bottom: 1px solid ${gh.border};
+  }
+  .cal-table th.sun { color: ${gh.sun}; }
+  .cal-table th.sat { color: ${gh.sat}; }
+  .cal-table td {
+    height: 56px; text-align: center; vertical-align: middle;
+    font-size: 14px; color: ${gh.text};
+    border-right: 1px solid ${gh.rowBorder};
+    border-bottom: 1px solid ${gh.rowBorder};
+  }
+  .cal-table td:last-child { border-right: none; }
+  .cal-table tr:last-child td { border-bottom: none; }
+  .cal-table td.sun { color: ${gh.sun}; }
+  .cal-table td.sat { color: ${gh.sat}; }
+  .cal-table td.empty { background: ${gh.headerBg}; }
+  .cal-day-today {
+    display: inline-block; min-width: 28px; padding: 4px 8px;
+    background: ${gh.todayBg}; color: ${gh.todayText};
+    border-radius: 999px; font-weight: 700;
+  }
+  @media (max-width: 600px) {
+    .cal-table td { height: 44px; font-size: 13px; }
+  }
+`;
+container.appendChild(style);
+
+const wrap = document.createElement("div");
+wrap.className = "cal-wrap";
+
+const title = document.createElement("div");
+title.className = "cal-title";
+title.textContent = `📆 ${YEAR}년 ${MONTH}월`;
+wrap.appendChild(title);
+
+const table = document.createElement("table");
+table.className = "cal-table";
+const thead = document.createElement("thead");
+const hrow = document.createElement("tr");
+dayNames.forEach((n, i) => {
+  const th = document.createElement("th");
+  th.textContent = n;
+  if (i === 0) th.className = "sun";
+  if (i === 6) th.className = "sat";
+  hrow.appendChild(th);
+});
+thead.appendChild(hrow);
+table.appendChild(thead);
+
+const tbody = document.createElement("tbody");
+for (let i = 0; i < cells.length; i += 7) {
+  const tr = document.createElement("tr");
+  cells.slice(i, i + 7).forEach((d, idx) => {
+    const td = document.createElement("td");
+    if (d === null) {
+      td.className = "empty";
+    } else {
+      if (idx === 0) td.className = "sun";
+      else if (idx === 6) td.className = "sat";
+      const isToday = today.getFullYear() === YEAR && today.getMonth() + 1 === MONTH && today.getDate() === d;
+      if (isToday) {
+        const span = document.createElement("span");
+        span.className = "cal-day-today";
+        span.textContent = d;
+        td.appendChild(span);
+      } else {
+        td.textContent = d;
+      }
+    }
+    tr.appendChild(td);
+  });
+  tbody.appendChild(tr);
+}
+table.appendChild(tbody);
+wrap.appendChild(table);
+container.appendChild(wrap);
+```
+
 ```dataviewjs
 // ─── 설정 ─────────────────────────────────────────
-const YEAR           = 2026;
-const MONTH          = 4;
-const DAILY_FOLDER   = "03. Daily Notes/2026년/4월";  // 실제 폴더 경로
 const TARGET_SECTION = "## 3.  학습 계획";
+const DAILY_FOLDER_TPL = "03. Daily Notes/{YEAR}년/{MONTH}월"; // {YEAR}, {MONTH} 치환
 // ──────────────────────────────────────────────────
+
+// ── 년/월 결정: frontmatter → 파일명 → 오늘 ──
+const fm = dv.current().file.frontmatter || {};
+const fname = dv.current().file.name;
+const fnMatch = fname.match(/(\d{4})[-년\s]*\s*(\d{1,2})/);
+const now = new Date();
+
+const YEAR  = Number(fm.year)  || (fnMatch && Number(fnMatch[1])) || now.getFullYear();
+const MONTH = Number(fm.month) || (fnMatch && Number(fnMatch[2])) || (now.getMonth() + 1);
+const DAILY_FOLDER = DAILY_FOLDER_TPL.replace("{YEAR}", YEAR).replace("{MONTH}", MONTH);
 
 const dayNames = ["일","월","화","수","목","금","토"];
 const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -51,62 +191,105 @@ for (const file of targetFiles) {
 // ── 2. 컨테이너 + 스타일 ──
 const container = dv.el("div", "");
 
+const isDark = document.body.classList.contains("theme-dark");
+const gh = isDark ? {
+  border: "#30363d", bg: "#0d1117", headerBg: "#161b22",
+  text: "#e6edf3", muted: "#7d8590", rowBorder: "#21262d",
+  hover: "#161b22", accent: "#2f81f7",
+  sun: "#f85149", sat: "#58a6ff", today: "#3fb950"
+} : {
+  border: "#d0d7de", bg: "#ffffff", headerBg: "#f6f8fa",
+  text: "#1f2328", muted: "#656d76", rowBorder: "#eaeef2",
+  hover: "#f6f8fa", accent: "#0969da",
+  sun: "#cf222e", sat: "#0969da", today: "#1a7f37"
+};
+
 const style = document.createElement("style");
 style.textContent = `
-  .ml-wrap { font-family: var(--font-interface); width: 100%; }
+  .ml-wrap {
+    font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+    width: 100%;
+    border: 1px solid ${gh.border};
+    border-radius: 6px;
+    overflow: hidden;
+    background: ${gh.bg};
+  }
   .ml-title {
-    font-size: 1.1em; font-weight: bold;
-    margin-bottom: 10px; text-align: center;
-    color: var(--text-normal);
+    font-size: 14px; font-weight: 600;
+    padding: 12px 16px;
+    background: ${gh.headerBg};
+    border-bottom: 1px solid ${gh.border};
+    color: ${gh.text};
   }
-  .ml-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .debug-box {
+    font-size: 12px; color: ${gh.muted};
+    padding: 8px 16px;
+    background: ${gh.bg};
+    border-bottom: 1px solid ${gh.rowBorder};
+  }
+  .ml-table-wrap { width: 100%; overflow-x: auto; }
+  .ml-table { width: 100%; border-collapse: collapse; background: ${gh.bg}; }
   .ml-table th {
-    background: var(--background-secondary);
-    color: var(--text-muted);
-    font-size: 0.85em; font-weight: 600;
-    padding: 8px 10px;
-    border: 1px solid var(--background-modifier-border);
-    text-align: left; box-sizing: border-box;
+    background: ${gh.headerBg};
+    color: ${gh.muted};
+    font-size: 12px; font-weight: 600;
+    padding: 8px 12px;
+    border-bottom: 1px solid ${gh.border};
+    text-align: left;
   }
-  .ml-table th:nth-child(1) { width: 100px; }
-  .ml-table th:nth-child(2) { width: 130px; }
+  .ml-table th:nth-child(1) { width: 110px; }
+  .ml-table th:nth-child(2) { width: 170px; text-align: center; }
   .ml-table th:nth-child(3) { width: auto; }
-  .ml-table th:nth-child(4) { width: 120px; }
+  .ml-table td:nth-child(1) { vertical-align: middle; }
+  .ml-table td:nth-child(2) { text-align: center; vertical-align: middle; }
   .ml-table td {
-    padding: 8px 10px;
-    border: 1px solid var(--background-modifier-border);
-    vertical-align: top; font-size: 0.85em;
-    color: var(--text-normal); box-sizing: border-box;
+    padding: 12px 14px;
+    border-bottom: 1px solid ${gh.rowBorder};
+    vertical-align: top; font-size: 15px;
+    color: ${gh.text};
   }
-  .ml-table tr:hover { background: var(--background-modifier-hover); }
-  .date-cell { font-weight: 600; white-space: nowrap; }
-  .date-cell.sun   { color: #e05252; }
-  .date-cell.sat   { color: #5588e8; }
-  .date-cell.today { color: var(--interactive-accent); font-weight: 700; }
+  .ml-table tbody tr:last-child td { border-bottom: none; }
+  .ml-table tbody tr:hover { background: ${gh.hover}; }
+  .date-cell { font-weight: 600; white-space: nowrap; color: ${gh.text}; font-size: 15px; }
+  .date-cell.sun   { color: ${gh.sun}; }
+  .date-cell.sat   { color: ${gh.sat}; }
+  .date-cell.today { color: ${gh.today}; font-weight: 700; }
   .date-sub {
-    font-size: 0.80em; color: var(--text-faint);
-    font-weight: normal; display: block; margin-top: 2px;
+    font-size: 12px; color: ${gh.muted};
+    font-weight: normal; display: block; margin-top: 3px;
   }
   .file-link {
-    font-size: 0.82em; color: var(--text-accent);
+    font-size: 14px; color: ${gh.accent};
     cursor: pointer; text-decoration: none; display: block;
+    word-break: break-all;
   }
   .file-link:hover { text-decoration: underline; }
-  .file-none { font-size: 0.80em; color: var(--text-faint); }
-  .task-list { margin: 0; padding: 0; list-style: none; }
+  .file-none { font-size: 14px; color: ${gh.muted}; }
+  .task-list { margin: 0 0 0 -20px; padding: 0; list-style: none; }
   .task-list li {
-    display: flex; align-items: flex-start;
-    gap: 5px; margin: 3px 0; line-height: 1.4;
+    display: flex; align-items: center;
+    gap: 4px; margin: 1px 0; line-height: 1.3;
   }
-  .task-list li input { flex-shrink: 0; margin-top: 2px; cursor: pointer; }
-  .task-list li span  { font-size: 0.88em; color: var(--text-normal); word-break: break-all; }
-  .task-list li.done span { text-decoration: line-through; color: var(--text-faint); }
-  .no-task { color: var(--text-faint); font-size: 0.80em; }
-  .debug-box {
-    font-size: 0.78em; color: var(--text-faint);
-    margin-bottom: 8px; padding: 4px 8px;
-    border: 1px dashed var(--background-modifier-border);
-    border-radius: 4px;
+  .task-list li input { flex-shrink: 0; margin: 0; padding: 0; cursor: pointer; accent-color: ${gh.accent}; }
+  .task-list li span  { font-size: 14px; color: ${gh.text}; word-break: break-word; padding: 0; }
+  .task-list li.done span { text-decoration: line-through; color: ${gh.muted}; }
+  .no-task { color: ${gh.muted}; font-size: 14px; }
+
+  /* 모바일 반응형: 카드 레이아웃 */
+  @media (max-width: 600px) {
+    .ml-table thead { display: none; }
+    .ml-table, .ml-table tbody, .ml-table tr, .ml-table td { display: block; width: 100%; box-sizing: border-box; }
+    .ml-table tr {
+      border-bottom: 1px solid ${gh.border};
+      padding: 10px 12px;
+    }
+    .ml-table tbody tr:last-child { border-bottom: none; }
+    .ml-table td {
+      border: none;
+      padding: 4px 0;
+    }
+    .ml-table td:first-child { padding-top: 0; }
+    .date-cell { font-size: 14px; }
   }
 `;
 container.appendChild(style);
@@ -135,7 +318,7 @@ table.className = "ml-table";
 
 const thead = document.createElement("thead");
 const hrow  = document.createElement("tr");
-["월일", "파일명", "주요 할일", "비고"].forEach(h => {
+["월일", "파일명", "주요 할일"].forEach(h => {
   const th = document.createElement("th");
   th.textContent = h;
   hrow.appendChild(th);
@@ -215,17 +398,16 @@ for (let d = 1; d <= lastDate; d++) {
     tdTask.appendChild(ul);
   }
 
-  // 비고 셀
-  const tdMemo = document.createElement("td");
-
   tr.appendChild(tdDate);
   tr.appendChild(tdFile);
   tr.appendChild(tdTask);
-  tr.appendChild(tdMemo);
   tbody.appendChild(tr);
 }
 
 table.appendChild(tbody);
-wrap.appendChild(table);
+const tableWrap = document.createElement("div");
+tableWrap.className = "ml-table-wrap";
+tableWrap.appendChild(table);
+wrap.appendChild(tableWrap);
 container.appendChild(wrap);
 ```
