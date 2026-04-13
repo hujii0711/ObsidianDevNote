@@ -1,30 +1,4 @@
 
-## 클로드 코드
-
-#### 1. 설정 파일
-
-| 로컬 프로젝트 설정 | /.claude/settings.local.json |
-| ---------- | ---------------------------- |
-| 공유 프로젝트 설정 | /.claude/settings.json       |
-| 사용자 설정     | ~/.claude/settings.json      |
-
-#### 2. md 파일
-
-|     | /project/.claude/CLAUDE.md                       |
-| --- | ------------------------------------------------ |
-|     | /project/.claude/docs/API_SCHEME.md              |
-|     | /project/.claude/docs/ER_DIAGRAM.md              |
-|     | /project/.claude/docs/SCREEN_DESIGN.md           |
-|     | /project/.claude/docs/TEST_DEFINITION.md         |
-|     | /project/.claude/agents/BIZ.md                   |
-|     | /project/.claude/commands/CUSTOM_HOOK_COMMAND.md |
-|     | /project/.claude/skills/SKILL.md                 |
-@docs/SCREEN_DESIGN.md: md 파일 참조
-
----
-
-##  오픈 클로
-
 #### 1. 설정 파일
 
 |     | ~/.openclaw/openclaw.db   |     |
