@@ -61,3 +61,73 @@
     
 
 일요일 밤, Git의 핵심 명령어 시리즈의 대미를 `remote`로 장식하셨네요! 이제 로컬에서의 작업(`add`, `commit`, `log` 등)부터 원격과의 소통(`fetch`, `pull`, `push`, `remote`)까지 깃의 전체적인 그림이 다 그려지셨을 것 같습니다.
+
+---
+---
+## git remote add와 git remote set-url의 차이
+
+
+Git을 사용하다 보면 리모트 저장소를 연결하거나 수정할 때 이 두 명령어가 헷갈릴 수 있습니다. 핵심만 말하자면, **이미 연결된 게 있느냐 없느냐**의 차이입니다.
+
+---
+
+## 1. git remote add
+
+이 명령어는<font color="#ff0000"> **새로운** 리모트 저장소 연결을 추가</font>할 때 사용합니다. 보통 프로젝트를 처음 시작하고 로컬 저장소를 서버(GitHub 등)에 처음 올릴 때 사용하죠.
+
+- **상황:** 로컬 저장소에 연결된 리모트가 없을 때, 또는 다른 서버를 추가로 연결하고 싶을 때.
+    
+- **문법:** `git remote add <이름> <URL>`
+    
+- **예시:** ```bash
+    
+    git remote add origin https://github.com/user/repo.git
+    
+    ```
+    > 이미 `origin`이라는 이름의 리모트가 설정되어 있다면, "fatal: remote origin already exists."라는 에러가 발생합니다.
+    
+    ```
+    
+
+---
+
+## 2. git remote set-url
+
+이 명령어는 <font color="#ff0000">**기존에 등록된** 리모트 저장소의 주소를 바꿀 때 사용</font>합니다. 저장소 이름을 바꿀 필요 없이 연결된 URL만 교체하는 기능입니다.
+
+- **상황:** GitHub 레포지토리 이름을 바꿨거나, HTTPS 주소에서 SSH 주소로 변경하고 싶을 때.
+    
+- **문법:** `git remote set-url <이름> <새로운URL>`
+    
+- **예시:**
+    
+    Bash
+    
+    ```
+    git remote set-url origin https://github.com/user/new-repo.git
+    ```
+    
+
+---
+
+## 한눈에 비교하기
+
+|**구분**|**git remote add**|**git remote set-url**|
+|---|---|---|
+|**주요 목적**|새로운 리모트 연결 생성|기존 리모트 주소 수정|
+|**기존 설정**|해당 이름이 없어야 함|해당 이름이 이미 있어야 함|
+|**사용 시점**|프로젝트 초기 세팅 시|서버 주소가 변경되었을 때|
+
+---
+
+### 💡 팁: 현재 상태 확인하기
+
+내가 지금 어떤 리모트 주소를 가지고 있는지 궁금하다면 아래 명령어를 입력해 보세요.
+
+Bash
+
+```
+git remote -v
+```
+
+만약 잘못 추가했다면 `git remote remove <이름>`으로 삭제한 뒤 다시 `add`하거나, 그냥 편하게 `set-url`로 주소만 덮어쓰시면 됩니다! 어느 상황에서 막히신 건가요?
