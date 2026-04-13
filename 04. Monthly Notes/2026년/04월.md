@@ -329,13 +329,11 @@ table.appendChild(thead);
 const tbody = document.createElement("tbody");
 
 for (let d = 1; d <= lastDate; d++) {
-  const dayName = days[today.getDay()];
-  const dateKey = `${YEAR}-${monthStr}-${String(d).padStart(2,"0")}(${dayName})`;
   const dateObj = new Date(YEAR, MONTH - 1, d);
   const dow     = dateObj.getDay();
-  console.log("dateKey====", dateKey)
+  const dayName = days[dow];
+  const dateKey = `${YEAR}-${monthStr}-${String(d).padStart(2,"0")}(${dayName})`;
   const tasks   = taskMap[dateKey] || [];
-  console.log("tasks====", tasks)
   const hasFile = Object.prototype.hasOwnProperty.call(taskMap, dateKey);
 
   const isToday = (
@@ -369,7 +367,7 @@ for (let d = 1; d <= lastDate; d++) {
   } else {
     const s    = document.createElement("span");
     s.className   = "file-none";
-    s.textContent = "—";
+    s.textContent = "";
     tdFile.appendChild(s);
   }
 
@@ -378,7 +376,7 @@ for (let d = 1; d <= lastDate; d++) {
   if (tasks.length === 0) {
     const s    = document.createElement("span");
     s.className   = "no-task";
-    s.textContent = "—";
+    s.textContent = "";
     tdTask.appendChild(s);
   } else {
     const ul = document.createElement("ul");
