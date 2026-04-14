@@ -1,6 +1,7 @@
 ## 1. Devkit
 
-- [ ] 
+- [ ] 서버버전에 codebuilder ctrl+F 기능 반영
+- [ ] studioAPI.js push xml 비활성화시 안내 메시지 출력
 
 ## 2. PaaS
 - [ ] 웹스퀘어 엔진 체크 및 등록 화면 개발
@@ -9,3 +10,9 @@
 - [ ] SMS 로그 정보 쌓기
 - [ ] spring boot 확장팩 자동 설치(내부망 설치 여부 확인)
 - [ ] SMS 랜덤 포트 전환
+- [ ] vscode개발환경에서 xml 편집하고 wpack 돌릴수 있게 작업환경 개선 (sms 랜덤포트 선행) workspace 유동적 지정
+- [ ] sms 랜덤 포트 전환
+- [ ] ai agent 로딩 지연 막기
+- [ ] 이미 띄워진 xml 탭에도 webviewTarget add
+- [ ] 특정 PC의 사용자 jetty 서버 프로젝트 지렉커리 404 문제 있음
+- [ ] w-pack 콘솔 사용자 vscode의 console에 출력되도록 변경
