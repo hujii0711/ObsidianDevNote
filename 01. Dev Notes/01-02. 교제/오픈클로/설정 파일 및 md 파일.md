@@ -1,23 +1,36 @@
 
 #### 1. 설정 파일
 
-|     | ~/.openclaw/openclaw.db   |     |
-| --- | ------------------------- | --- |
-|     | ~/.openclaw/openclaw.json |     |
-|     | ~/.openclaw/.env          |     |
+| ~/.openclaw/openclaw.db   |     |
+| ------------------------- | --- |
+| ~/.openclaw/openclaw.json |     |
+| ~/.openclaw/.env          |     |
 
 #### 2. md 파일
 
-|     | ~/.openclaw/workspace/SOUL.md             | 행동 철학, 말투, 원칙, 금지 사항    |
-| --- | ----------------------------------------- | ----------------------- |
-|     | ~/.openclaw/workspace/IDENTIFY.md         | 이름, 이모지, 역할 한 줄 소개      |
-|     | ~/.openclaw/workspace/USER.md             | 사용자 정보(이름, 호칭, 타임존, 선호) |
-|     | ~/.openclaw/workspace/skills/biz/SKILL.md |                         |
-|     | ~/.openclaw/workspace/AGENT.md            |                         |
-|     | ~/.openclaw/memory/MEMORY.md              |                         |
-#### 3. 명령어
-`openclaw onboard`
-`openclaw --version`
-`openclaw models set google/gemini-3-flash-preview`
-`openclaw gateway restart`
-`openclaw skills list`
+| ~/.openclaw/workspace/SOUL.md             | 행동 철학, 말투, 원칙, 금지 사항    | 성격과 가치관 |
+| ----------------------------------------- | ----------------------- | ------- |
+| ~/.openclaw/workspace/IDENTIFY.md         | 이름, 이모지, 역할 한 줄 소개      | 명함      |
+| ~/.openclaw/workspace/USER.md             | 사용자 정보(이름, 호칭, 타임존, 선호) | 고객 카드   |
+| ~/.openclaw/workspace/skills/biz/SKILL.md |                         |         |
+| ~/.openclaw/workspace/AGENT.md            |                         |         |
+| ~/.openclaw/memory/MEMORY.md              |                         |         |
+- SOUL.md
+나는 어떤 존재인가를 정의한다. 말투, 행동 원칙, 하지 말아야 할 일을 적는 곳이다. 세 파일 중 가장 중요하면서 가장 길어지는 파일이기도 하다.
+1) 정체성: 나는 누구인가
+2) 말투: 어떻게 말하는가
+3) 행동 원칙: 무엇을 중요하게 여기는가
+4) 금지 사항: 무엇을 하지 않는가
+
+- IDENTITY.md
+에이전트의 명함이다. 이름, 이모지, 한 줄 소개(자기소개) 같은 간결한 메타 정보를 담는다. 
+
+- USER.md
+사용자에 대한 정보이다. 이름, 호칭, 타임존, 업무 스타일 같은 것을 적어두면 에이전트가 대화할 때 참고한다.
+예를 들어 사용자를 주인님이라고 부를지 팀장님이라고 부를지도 여기서 정한다.
+
+위 3가지 파일은 에이전트가 대화를 시작할 때마다 시스템 프롬프트에 포함된다. 파일을 수정하면 다음 대화부터 바로 반영되다. 게이트웨이 재시작은 필요 없다.
+
+
+
+
