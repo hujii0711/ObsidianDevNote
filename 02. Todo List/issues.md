@@ -17,5 +17,5 @@
 - [ ] sms 랜덤 포트 전환
 - [ ] ai agent 로딩 지연 막기
 - [ ] 이미 띄워진 xml 탭에도 webviewTarget add
-- [ ] 특정 PC의 사용자 jetty 서버 프로젝트 지렉커리 404 문제 있음
+- [ ] 특정 PC의 사용자 jetty 서버 프로젝트 디렉터리 404 문제 있음
 - [ ] w-pack 콘솔 사용자 vscode의 console에 출력되도록 변경
