@@ -1,6 +1,7 @@
 ---
 year: "2026"
 month: "4"
+ww: "17"
 ---
 
 ```dataviewjs
@@ -11,6 +12,7 @@ const fnMatch = fname.match(/(\d{4})[-년\s]*\s*(\d{1,2})/);
 const now = new Date();
 const YEAR  = Number(fm.year)  || (fnMatch && Number(fnMatch[1])) || now.getFullYear();
 const MONTH = Number(fm.month) || (fnMatch && Number(fnMatch[2])) || (now.getMonth() + 1);
+const TARGET_WK = Number(fm.ww) || 0;
 
 const dayNames = ["일","월","화","수","목","금","토"];
 const firstWeekday = new Date(YEAR, MONTH - 1, 1).getDay();
@@ -125,9 +127,8 @@ for (let i = 0; i < cells.length; i += 7) {
     const yearStart = new Date(Date.UTC(dt.getUTCFullYear(), 0, 1));
     const wk = Math.ceil((((dt - yearStart) / 86400000) + 1) / 7);
     tdWk.textContent = String(wk).padStart(2, "0");
+    if (TARGET_WK && wk === TARGET_WK) tr.className = "cur-week";
   }
-  const isCurWeek = today.getFullYear() === YEAR && today.getMonth() + 1 === MONTH && rowDays.includes(today.getDate());
-  if (isCurWeek) tr.className = "cur-week";
   tr.appendChild(tdWk);
   rowDays.forEach((d, idx) => {
     const td = document.createElement("td");
