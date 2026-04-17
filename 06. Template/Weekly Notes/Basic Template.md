@@ -1,0 +1,135 @@
+
+```dataviewjs
+// ─── 월간 달력 그리드 ─────────────────────────────
+const fm = dv.current().file.frontmatter || {};
+const fname = dv.current().file.name;
+const fnMatch = fname.match(/(\d{4})[-년\s]*\s*(\d{1,2})/);
+const now = new Date();
+const YEAR  = Number(fm.year)  || (fnMatch && Number(fnMatch[1])) || now.getFullYear();
+const MONTH = Number(fm.month) || (fnMatch && Number(fnMatch[2])) || (now.getMonth() + 1);
+
+const dayNames = ["일","월","화","수","목","금","토"];
+const firstWeekday = new Date(YEAR, MONTH - 1, 1).getDay();
+const lastDate = new Date(YEAR, MONTH, 0).getDate();
+const today = new Date();
+
+const cells = [];
+for (let i = 0; i < firstWeekday; i++) cells.push(null);
+for (let d = 1; d <= lastDate; d++) cells.push(d);
+while (cells.length % 7 !== 0) cells.push(null);
+
+const isDark = document.body.classList.contains("theme-dark");
+const gh = isDark ? {
+  border: "#30363d", bg: "#0d1117", headerBg: "#161b22",
+  text: "#e6edf3", muted: "#7d8590", rowBorder: "#21262d",
+  hover: "#161b22", todayBg: "#1f6feb", todayText: "#ffffff",
+  sun: "#f85149", sat: "#58a6ff"
+} : {
+  border: "#d0d7de", bg: "#ffffff", headerBg: "#f6f8fa",
+  text: "#1f2328", muted: "#656d76", rowBorder: "#eaeef2",
+  hover: "#f6f8fa", todayBg: "#0969da", todayText: "#ffffff",
+  sun: "#cf222e", sat: "#0969da"
+};
+
+const container = dv.el("div", "");
+const style = document.createElement("style");
+style.textContent = `
+  .cal-wrap {
+    font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+    border: 1px solid ${gh.border}; border-radius: 6px; overflow: hidden;
+    background: ${gh.bg}; margin-bottom: 16px;
+  }
+  .cal-title {
+    font-size: 14px; font-weight: 600;
+    padding: 12px 16px; background: ${gh.headerBg};
+    border-bottom: 1px solid ${gh.border}; color: ${gh.text};
+  }
+  .cal-table { width: 100%; border-collapse: collapse; table-layout: fixed; background: ${gh.bg}; }
+  .cal-table th {
+    background: ${gh.headerBg}; color: ${gh.muted};
+    font-size: 12px; font-weight: 600;
+    padding: 8px 0; text-align: center;
+    border-bottom: 1px solid ${gh.border};
+  }
+  .cal-table th.sun { color: ${gh.sun}; }
+  .cal-table th.sat { color: ${gh.sat}; }
+  .cal-table td {
+    height: 56px; text-align: center; vertical-align: middle;
+    font-size: 14px; color: ${gh.text};
+    border-right: 1px solid ${gh.rowBorder};
+    border-bottom: 1px solid ${gh.rowBorder};
+  }
+  .cal-table td:last-child { border-right: none; }
+  .cal-table tr:last-child td { border-bottom: none; }
+  .cal-table td.sun { color: ${gh.sun}; }
+  .cal-table td.sat { color: ${gh.sat}; }
+  .cal-table td.empty { background: ${gh.headerBg}; }
+  .cal-day-today {
+    display: inline-block; min-width: 28px; padding: 4px 8px;
+    background: ${gh.todayBg}; color: ${gh.todayText};
+    border-radius: 999px; font-weight: 700;
+  }
+  @media (max-width: 600px) {
+    .cal-table td { height: 44px; font-size: 13px; }
+  }
+`;
+container.appendChild(style);
+
+const wrap = document.createElement("div");
+wrap.className = "cal-wrap";
+
+const title = document.createElement("div");
+title.className = "cal-title";
+title.textContent = `📆 ${YEAR}년 ${MONTH}월`;
+wrap.appendChild(title);
+
+const table = document.createElement("table");
+table.className = "cal-table";
+const thead = document.createElement("thead");
+const hrow = document.createElement("tr");
+dayNames.forEach((n, i) => {
+  const th = document.createElement("th");
+  th.textContent = n;
+  if (i === 0) th.className = "sun";
+  if (i === 6) th.className = "sat";
+  hrow.appendChild(th);
+});
+thead.appendChild(hrow);
+table.appendChild(thead);
+
+const tbody = document.createElement("tbody");
+for (let i = 0; i < cells.length; i += 7) {
+  const tr = document.createElement("tr");
+  cells.slice(i, i + 7).forEach((d, idx) => {
+    const td = document.createElement("td");
+    if (d === null) {
+      td.className = "empty";
+    } else {
+      if (idx === 0) td.className = "sun";
+      else if (idx === 6) td.className = "sat";
+      const isToday = today.getFullYear() === YEAR && today.getMonth() + 1 === MONTH && today.getDate() === d;
+      if (isToday) {
+        const span = document.createElement("span");
+        span.className = "cal-day-today";
+        span.textContent = d;
+        td.appendChild(span);
+      } else {
+        td.textContent = d;
+      }
+    }
+    tr.appendChild(td);
+  });
+  tbody.appendChild(tr);
+}
+table.appendChild(tbody);
+wrap.appendChild(table);
+container.appendChild(wrap);
+```
+
+## 1. 주간 회사 업무
+- 
+
+---
+
+## 2. 학습 계획
+- 
