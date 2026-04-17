@@ -1,4 +1,4 @@
-# 09. Claude Code를 활용한 AI 주도 개발 전략
+# Claude Code를 활용한 AI 주도 개발 전략
 
 > Claude Code의 MCP, 스킬, 훅, 서브 에이전트를 최대한 활용하여 Private LLM 시스템을 효율적으로 구축하는 전략
 
