@@ -1,3 +1,7 @@
+---
+year: "2026"
+month: "4"
+---
 
 ```dataviewjs
 // ─── 월간 달력 그리드 ─────────────────────────────
@@ -45,6 +49,7 @@ style.textContent = `
     border-bottom: 1px solid ${gh.border}; color: ${gh.text};
   }
   .cal-table { width: 100%; border-collapse: collapse; table-layout: fixed; background: ${gh.bg}; }
+  .cal-table .wk { width: 36px; font-size: 11px; color: ${gh.muted}; font-weight: 600; background: ${gh.headerBg}; }
   .cal-table th {
     background: ${gh.headerBg}; color: ${gh.muted};
     font-size: 12px; font-weight: 600;
@@ -64,6 +69,11 @@ style.textContent = `
   .cal-table td.sun { color: ${gh.sun}; }
   .cal-table td.sat { color: ${gh.sat}; }
   .cal-table td.empty { background: ${gh.headerBg}; }
+  .cal-table tr.cur-week td,
+  .cal-table tr.cur-week td.sun,
+  .cal-table tr.cur-week td.sat,
+  .cal-table tr.cur-week td.empty { background: ${isDark ? "#1a2332" : "#ddf4ff"} !important; }
+  .cal-table tr.cur-week td.wk { background: ${isDark ? "#14283d" : "#c8e6ff"} !important; }
   .cal-day-today {
     display: inline-block; min-width: 28px; padding: 4px 8px;
     background: ${gh.todayBg}; color: ${gh.todayText};
@@ -87,6 +97,10 @@ const table = document.createElement("table");
 table.className = "cal-table";
 const thead = document.createElement("thead");
 const hrow = document.createElement("tr");
+const thWk = document.createElement("th");
+thWk.className = "wk";
+thWk.textContent = "W";
+hrow.appendChild(thWk);
 dayNames.forEach((n, i) => {
   const th = document.createElement("th");
   th.textContent = n;
@@ -100,7 +114,22 @@ table.appendChild(thead);
 const tbody = document.createElement("tbody");
 for (let i = 0; i < cells.length; i += 7) {
   const tr = document.createElement("tr");
-  cells.slice(i, i + 7).forEach((d, idx) => {
+  const rowDays = cells.slice(i, i + 7);
+  const tdWk = document.createElement("td");
+  tdWk.className = "wk";
+  const refDay = rowDays[4] || rowDays[5] || rowDays[6] || rowDays[3] || rowDays[2] || rowDays[1] || rowDays[0];
+  if (refDay) {
+    const dt = new Date(Date.UTC(YEAR, MONTH - 1, refDay));
+    const dayNum = dt.getUTCDay() || 7;
+    dt.setUTCDate(dt.getUTCDate() + 4 - dayNum);
+    const yearStart = new Date(Date.UTC(dt.getUTCFullYear(), 0, 1));
+    const wk = Math.ceil((((dt - yearStart) / 86400000) + 1) / 7);
+    tdWk.textContent = String(wk).padStart(2, "0");
+  }
+  const isCurWeek = today.getFullYear() === YEAR && today.getMonth() + 1 === MONTH && rowDays.includes(today.getDate());
+  if (isCurWeek) tr.className = "cur-week";
+  tr.appendChild(tdWk);
+  rowDays.forEach((d, idx) => {
     const td = document.createElement("td");
     if (d === null) {
       td.className = "empty";
@@ -125,6 +154,7 @@ table.appendChild(tbody);
 wrap.appendChild(table);
 container.appendChild(wrap);
 ```
+---
 
 ## 1. 주간 회사 업무
 - 
