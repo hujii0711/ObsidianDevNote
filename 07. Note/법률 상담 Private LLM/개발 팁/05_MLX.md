@@ -1,3 +1,4 @@
+Machine Learning eXplorer
 `pip install mlx mlx-lm`에서 다루는 두 라이브러리는 Apple Silicon(M1, M2, M3, M4 칩) 환경에서 머신러닝 모델을 효율적으로 구동하기 위해 설계된 핵심 도구들입니다.
 
 구축하신 **MacBook Pro M4** 환경에서 로컬 LLM을 구동하거나 파인튜닝을 고려하실 때 가장 강력한 선택지가 될 것입니다.
