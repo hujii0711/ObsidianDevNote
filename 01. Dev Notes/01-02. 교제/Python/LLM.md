@@ -19,3 +19,14 @@
 파이토치 설치: conda install pytorch torchvision torchaudio -c pytorch
 
 tiktoken 설치: conda install -c conda-forge tiktoken
+
+- 파이썬 가상 환경 구성
+1. python3 -m venv myenv: 가상 환경 생성
+2. source myenv/bin/activate: 가상 환경 활성화
+3. pip3 install xlwings: 가상 환경 내 패키지 설치
+4. pip3 freeze: 패키지 목록 출력
+5. pip3 freeze > requirement.txt: 설치 패키지 목록 파일로 생성
+6. pip3 install -r requirement.txt: 파일 기반으로 가상 환경에 필요한 패키지 설치
+7. python3 -m venv myenv --system-site-packages: 공용 패키지 함께 사용 가능
+8. pip3 list: 공용 패키지 설치 목록 확인
+9. pip3 list --local: 가상 환경에 설치된 패키지만 확인
