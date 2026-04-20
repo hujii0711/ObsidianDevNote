@@ -5,14 +5,15 @@
 - [ ] 2차 임베딩 색인하여 배포 또는 관리자 페이지에서 업데이트 하는 방안 마련
 - [ ] documents와 Websquare API만 나눠서 색인하는 관리자 페이지 필요
 - [ ] devkit 문서 관리 시스템에 색인된 인덱스 목록 조회 하는 화면 필요
-
+- [ ] devkit-server 일본어 서비스 동기화 [우선]
+- [ ] 
 ## 2. PaaS
 - [ ] 웹스퀘어 엔진 체크 및 등록 화면 개발
 - [ ] settings theme 변경시 editor, panel 모두 즉시 반영되도록 조치
 - [ ] SMS 크래시 발생시 서버 죽지 않게 PM2 적용
 - [ ] SMS 로그 정보 쌓기
 - [ ] spring boot 확장팩 자동 설치(내부망 설치 여부 확인)
-- [ ] SMS 랜덤 포트 전환
+- [ ] SMS 랜덤 포트 전환  [우선]
 - [ ] vscode개발환경에서 xml 편집하고 wpack 돌릴수 있게 작업환경 개선 (sms 랜덤포트 선행) workspace 유동적 지정
 - [ ] sms 랜덤 포트 전환
 - [ ] ai agent 로딩 지연 막기
@@ -23,3 +24,7 @@
 - [ ] 빌드시 iwd build 포함
 - [ ] ws.codeworkspace untracked하게
 - [ ] 맥 빌드 starup.sh시 오류 있음
+- [ ] vscode인지 이클립스인지 체크하는 공통함수 추가
+- [ ] production일때 랜덤 포트 경로 체크 [우선]
+- [ ] devkit 서버 버전 vscode에서 띄우기 [우선]
+- [ ] ws-ext에서 production인지 development인지 환경 변수 적용 [우선]
