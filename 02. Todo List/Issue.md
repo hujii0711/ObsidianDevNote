@@ -22,6 +22,6 @@
 - [ ] 맥 빌드 starup.sh시 오류 있음
 - [ ] ==vscode인지 이클립스인지 체크하는 공통함수 추가 (안함)==
 - [x] production일때 랜덤 포트 경로 체크 [우선]
-- [ ] devkit 서버 버전 vscode에서 띄우기 [우선]
+- [x] devkit 서버 버전 vscode에서 띄우기 [우선]
 - [x] ws-ext에서 production인지 development인지 환경 변수 적용 [우선]
 - [ ] sms 랜덤 포트 전환시 운영에서는 같은 server.runtime.json을 바라보므로 문제가 방생함. Sms hash키를 가지고 있어야함 [우선]
