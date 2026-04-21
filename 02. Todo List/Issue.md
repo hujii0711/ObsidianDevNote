@@ -11,7 +11,7 @@
 - [ ] ==SMS 크래시 발생시 서버 죽지 않게 PM2 적용 (안함)==
 - [ ] ==SMS 로그 정보 쌓기 (안함)==
 - [ ] ==spring boot 확장팩 자동 설치(내부망 설치 여부 확인) (안함)==
-- [ ] SMS 랜덤 포트 전환  [우선]
+- [x] SMS 랜덤 포트 전환  [우선]
 - [ ] vscode개발환경에서 xml 편집하고 wpack 돌릴수 있게 작업환경 개선 workspace 유동적 지정
 - [ ] ai agent 로딩 지연 막기
 - [ ] 이미 띄워진 xml 탭에도 webviewTarget add
