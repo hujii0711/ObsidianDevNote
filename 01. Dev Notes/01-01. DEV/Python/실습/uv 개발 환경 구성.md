@@ -1,4 +1,3 @@
-
 #### 1. uv 설치
 ```zsh
 curl -LsSf https://astral.sh/uv/install.sh | sh
