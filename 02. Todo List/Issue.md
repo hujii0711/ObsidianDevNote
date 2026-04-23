@@ -3,7 +3,7 @@
 - [ ] studioAPI.js push xml 비활성화시 안내 메시지 출력
 - [ ] 2차 임베딩 색인하여 배포 또는 관리자 페이지에서 업데이트 하는 방안 마련
 - [x] documents와 Websquare API 나눠서 색인하는 관리자 페이지 필요
-- [ ] devkit-server 일본어 서비스 동기화 [우선]
+- [x] devkit-server 일본어 서비스 동기화 [우선]
 - [ ] 검색 상세페이지 랜더링 안됨, 동영상 경로 못찾음: vscode에서만 발생하는 현상
 
 
@@ -19,7 +19,7 @@
 - [ ] 이미 띄워진 xml 탭에도 webviewTarget add
 - [ ] 특정 PC의 사용자 jetty 서버 프로젝트 디렉터리 404 문제 있음
 - [ ] w-pack 콘솔 사용자 vscode의 console에 출력되도록 변경 [우선]
-- [ ] Portable 빌드시 IWD build 포함
+- [x] Portable 빌드시 IWD build 포함
 - [ ] ws.codeworkspace untracked하게
 - [ ] 맥 빌드 starup.sh시 오류 있음
 - [ ] ==vscode인지 이클립스인지 체크하는 공통함수 추가 (안함)==
@@ -29,4 +29,4 @@
 - [x] sms 랜덤 포트 전환시 운영에서는 같은 server.runtime.json을 바라보므로 문제가 방생함. Sms hash키를 가지고 있어야함 [우선]
 - [ ] vsix에 SMS와 AI_AGENT 포함하기 [우선]
 - [ ] JDK 21(LTS) 버전으로 내장하기 [우선]
-- [ ] 
+- [ ] panel 리로드 기능
