@@ -37,3 +37,5 @@
 - [ ] docs와 CLAUDE.md가 젤 중요하다고 함(실밸개발자) -> lazy loading으로 다른 .md 참조할 수 있게 해야 함
 - [ ] 파이썬 필수 문법(데코레이터 등)
 - [ ] compact 40%로 설정하기(~/.claude/settings.json: CLAUDE_AUTOCOMPACT_PCT_OVERRIDE = "40")
+- [ ] 학습 파라미터에 설정하는 옵션을 중심으로 용어 정리
+- [ ] 
