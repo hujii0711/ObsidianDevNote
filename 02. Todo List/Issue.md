@@ -27,15 +27,15 @@
 - [x] devkit 서버 버전 vscode에서 띄우기 [우선]
 - [x] ws-ext에서 production인지 development인지 환경 변수 적용 [우선]
 - [x] sms 랜덤 포트 전환시 운영에서는 같은 server.runtime.json을 바라보므로 문제가 방생함. Sms hash키를 가지고 있어야함 [우선]
-- [ ] vsix에 SMS와 AI_AGENT 포함하기 [우선]
-- [ ] JDK 21(LTS) 버전으로 내장하기 [우선]
+- [x] vsix에 SMS와 AI_AGENT 포함하기 [우선]
+- [x] JDK 21(LTS) 버전으로 내장하기 [우선]
 - [ ] panel 리로드 기능
 
 
 ---
 ### 3. Tip
 - [ ] docs와 CLAUDE.md가 젤 중요하다고 함(실밸개발자) -> lazy loading으로 다른 .md 참조할 수 있게 해야 함
-- [ ] 파이썬 필수 문법(데코레이터 등)
+- [x] 파이썬 필수 문법(데코레이터 등)
 - [ ] compact 40%로 설정하기(~/.claude/settings.json: CLAUDE_AUTOCOMPACT_PCT_OVERRIDE = "40")
-- [ ] 학습 파라미터에 설정하는 옵션을 중심으로 용어 정리
+- [x] 학습 파라미터에 설정하는 옵션을 중심으로 용어 정리
 - [ ] 
