@@ -15,10 +15,10 @@
 - [ ] ==spring boot 확장팩 자동 설치(내부망 설치 여부 확인) (안함)==
 - [x] SMS 랜덤 포트 전환  [우선]
 - [ ] vscode개발환경에서 xml 편집하고 wpack 돌릴수 있게 작업환경 개선 workspace 유동적 지정
-- [ ] ai agent 로딩 지연 막기 [우선]
+- [x] ai agent 로딩 지연 막기 [우선]
 - [ ] 이미 띄워진 xml 탭에도 webviewTarget add
-- [ ] 특정 PC의 사용자 jetty 서버 프로젝트 디렉터리 404 문제 있음
-- [ ] w-pack 콘솔 사용자 vscode의 console에 출력되도록 변경 [우선]
+- [x] 특정 PC의 사용자 jetty 서버 프로젝트 디렉터리 404 문제 있음
+- [x] w-pack 콘솔 사용자 vscode의 console에 출력되도록 변경 [우선]
 - [x] Portable 빌드시 IWD build 포함
 - [ ] ws.codeworkspace untracked하게
 - [ ] 맥 빌드 starup.sh시 오류 있음
@@ -30,6 +30,11 @@
 - [x] vsix에 SMS와 AI_AGENT 포함하기 [우선]
 - [x] JDK 21(LTS) 버전으로 내장하기 [우선]
 - [ ] panel 리로드 기능
+- [ ] production은 모두 ext가 sms 실행, basicjetty 재시작 안하고 xml 활성화시 바로 시작, sms 로그 나오도록 수정, sms 새창으로 나오게 하는 버전
+- [ ] 맥에서 포터블 버전 정상 확인
+- [ ] 폴더 영역 추가한 프로젝트는 화면 깨짐
+- [ ] 
+
 
 
 ---
