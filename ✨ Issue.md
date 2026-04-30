@@ -30,7 +30,10 @@
 - [x] vsix에 SMS와 AI_AGENT 포함하기 [우선]
 - [x] JDK 21(LTS) 버전으로 내장하기 [우선]
 - [ ] panel 리로드 기능
-- [ ] production은 모두 ext가 sms 실행, basicjetty 재시작 안하고 xml 활성화시 바로 시작, sms 로그 나오도록 수정, sms 새창으로 나오게 하는 버전
+- [ ] production은 모두 ext가 sms 실행
+- [ ] production은 basicjetty 재시작 안하고 xml 활성화시 바로 시작
+- [ ] production은 sms 로그 나오도록 수정
+- [ ] production은 sms 새창으로 나오게 하는 버전
 - [ ] 맥에서 포터블 버전 정상 확인
 - [ ] 폴더 영역 추가한 프로젝트는 화면 깨짐
 - [ ] 
