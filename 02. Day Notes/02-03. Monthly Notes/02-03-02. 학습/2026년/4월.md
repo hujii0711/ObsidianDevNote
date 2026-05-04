@@ -133,7 +133,7 @@ container.appendChild(wrap);
 ```dataviewjs
 // ─── 설정 ─────────────────────────────────────────
 const TARGET_SECTION = "## 3.  학습 계획";
-const DAILY_FOLDER_TPL = "03. Daily Notes/{YEAR}년/{MONTH}월"; // {YEAR}, {MONTH} 치환
+const DAILY_FOLDER_TPL = "02. Day Notes/02-01. Daily Notes/{YEAR}년/{MONTH}월"; // {YEAR}, {MONTH} 치환
 // ──────────────────────────────────────────────────
 
 // ── 년/월 결정: frontmatter → 파일명 → 오늘 ──
