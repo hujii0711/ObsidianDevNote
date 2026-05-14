@@ -1,4 +1,3 @@
-# Playwright에서 Coverage의 역할과 쓰임새
 
 ## Coverage란?
 
