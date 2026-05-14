@@ -21,7 +21,7 @@
 - [x] w-pack 콘솔 사용자 vscode의 console에 출력되도록 변경 [우선]
 - [x] Portable 빌드시 IWD build 포함
 - [ ] ws.codeworkspace untracked하게
-- [ ] 맥 빌드 starup.sh시 오류 있음
+- [x] 맥 빌드 starup.sh시 오류 있음
 - [ ] ==vscode인지 이클립스인지 체크하는 공통함수 추가 (안함)==
 - [x] production일때 랜덤 포트 경로 체크 [우선]
 - [x] devkit 서버 버전 vscode에서 띄우기 [우선]
@@ -32,7 +32,7 @@
 - [ ] panel 리로드 기능
 - [x] production은 모두 ext가 sms 실행
 - [x] production은 sms 로그 나오도록 수정
-- [ ] 맥에서 포터블 버전 정상 확인
+- [x] 맥에서 포터블 버전 정상 확인
 - [ ] 폴더 영역 추가한 프로젝트는 화면 깨짐
 - [ ] 
 
