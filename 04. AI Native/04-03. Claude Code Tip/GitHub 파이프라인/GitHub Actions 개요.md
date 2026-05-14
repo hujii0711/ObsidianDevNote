@@ -387,4 +387,111 @@ ChatOps / 명령어   → issue_comment
 워크플로우 재사용  → workflow_call
 ```
 
-특정 기술 스택이나 시나리오에 맞는 실제 워크플로우 예시 코드가 필요하시면 말씀해 주세요! 🚀
+특정 기술 스택이나 시나리오에 맞는 실제 워크플로우 예시 코드가 필요하시면 말씀해 주세요! 
+
+---
+---
+GitHub Actions를 활용해 CI/CD 파이프라인을 구축할 때 가장 핵심이 되는 것은 프로젝트 루트 디렉토리에 위치하는 **워크플로우(Workflow) 설정 파일**입니다.
+
+기본적으로 `.github/workflows/` 폴더 내에 `.yml` 또는 `.yaml` 확장자로 파일을 생성해야 GitHub가 이를 인식하고 자동화를 실행합니다.
+
+---
+
+## 1. 기본 폴더 구조
+
+GitHub Actions가 동작하기 위해서는 반드시 아래와 같은 경로 규칙을 지켜야 합니다.
+
+Plaintext
+
+```
+my-project/
+├── .github/
+│   └── workflows/
+│       └── main.yml  <-- CI/CD 설정 파일
+├── src/
+├── package.json (또는 build.gradle, requirements.txt 등)
+└── ...
+```
+
+---
+
+## 2. CI/CD 기본 설정 파일 예시 (`main.yml`)
+
+가장 범용적으로 사용되는 구조입니다. 코드 푸시 시 테스트(CI)를 수행하고, 특정 조건에서 배포(CD)를 진행하는 흐름을 담고 있습니다.
+
+```yaml
+# 워크플로우의 이름
+name: CI/CD Pipeline
+
+# 트리거: 언제 이 스크립트를 실행할 것인가?
+on:
+  push:
+    branches: [ "main" ]  # main 브랜치에 push될 때
+  pull_request:
+    branches: [ "main" ]  # main 브랜치로 PR이 올라올 때
+
+# 실행될 작업들
+jobs:
+  # 1. CI 단계: 빌드 및 테스트
+  build-and-test:
+    runs-on: ubuntu-latest # 실행 환경 (Linux)
+
+    steps:
+      - name: 소스코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: 개발 환경 설정 (예: Node.js)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 의존성 설치
+        run: npm install
+
+      - name: 테스트 실행
+        run: npm test
+
+  # 2. CD 단계: 배포 (빌드가 성공했을 때만 실행)
+  deploy:
+    needs: build-and-test # CI 단계가 성공해야 실행됨
+    if: github.ref == 'refs/heads/main' # main 브랜치일 때만 배포
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 배포 스크립트 실행
+        run: |
+          echo "서버로 결과물을 전송하고 배포를 진행합니다."
+          # 예: ssh 접속 후 docker pull 및 restart 등
+```
+
+---
+
+## 3. 핵심 구성 요소 설명
+
+### **Events (on)**
+
+워크플로우를 실행시키는 촉매제입니다. `push`, `pull_request` 외에도 `schedule`(정기 실행)이나 `workflow_dispatch`(수동 실행) 등을 사용할 수 있습니다.
+
+### **Jobs & Steps**
+
+- **Jobs**: 독립된 가상 머신에서 실행되는 작업 단위입니다. 여러 Job을 병렬로 실행하거나 `needs`를 통해 순서를 지정할 수 있습니다.
+    
+- **Steps**: Job 안에서 순차적으로 실행되는 개별 단계입니다. `uses`(미리 만들어진 액션 사용)나 `run`(직접 커맨드 실행)으로 구성됩니다.
+    
+
+### **Actions (uses)**
+
+자주 반복되는 작업(로그인, 체크아웃, 언어 설정 등)을 미리 구현해놓은 라이브러리입니다. GitHub Marketplace에서 다양한 공식/커뮤니티 액션을 찾아 활용할 수 있습니다.
+
+---
+
+## 4. 보안을 위한 필수 설정 (Secrets)
+
+배포 시 필요한 API Key나 서버 접속 비밀번호는 파일에 직접 쓰지 않고 **GitHub Secrets**를 사용해야 합니다.
+
+- 설정 경로: `GitHub 저장소 > Settings > Secrets and variables > Actions`
+    
+- 사용법: 파일 내에서 `${{ secrets.MY_PASSWORD }}` 형태로 호출합니다.
+    
+
+이 구조를 바탕으로 사용하시는 언어(Java, Python, JS 등)와 배포 대상(AWS, Azure, Docker 등)에 맞춰 `steps`의 내용만 수정하면 바로 CI/CD 운영이 가능합니다.
