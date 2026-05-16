@@ -37,9 +37,3 @@
 - [ ] vsix 설치 후 삭제, 업데이트하는 방법 있어야 함
 - [ ] Project Jetty 안죽고 살아있는지 체크
 
-
-
----
-### 3. Tip
-- [ ] docs와 CLAUDE.md가 젤 중요하다고 함(실밸개발자) -> lazy loading으로 다른 .md 참조할 수 있게 해야 함
-- [ ] compact 40%로 설정하기(~/.claude/settings.json: CLAUDE_AUTOCOMPACT_PCT_OVERRIDE = "40")
