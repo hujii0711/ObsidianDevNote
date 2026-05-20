@@ -1,4 +1,3 @@
-# CLAUDE.md — Private Legal LLM
 
 ## 프로젝트 개요
 

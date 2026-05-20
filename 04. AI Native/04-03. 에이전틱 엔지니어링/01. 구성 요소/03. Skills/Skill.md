@@ -1,7 +1,8 @@
 
 ### 1. Skills란? → AI에게 주는 업무 매뉴얼
-![Pasted image 20260419140714.png](app://833c599d816d68a5dfe5a2b0c9c10cc381dd/Users/fujii0711/Documents/Obsidian/DevNote/06.%20Link%20Images/Pasted%20image%2020260419140714.png?1776575234880)  
-![Pasted image 20260419140802.png](app://833c599d816d68a5dfe5a2b0c9c10cc381dd/Users/fujii0711/Documents/Obsidian/DevNote/06.%20Link%20Images/Pasted%20image%2020260419140802.png?1776575282439)  
+![[Pasted image 20260419140714.png]]
+![[Pasted image 20260419140802.png]]
+
 반복되는 프롬프트를 `SKILL.md` 파일에 정의하여 AI에게 **업무 매뉴얼**처럼 전달하는 기능입니다.
 한 번 만들면 자동 트리거 또는 `/skill-name`으로 호출하여 매번 같은 품질의 결과를 얻을 수 있습니다.
 
@@ -47,7 +48,8 @@
 
 → 평소에는 가볍게, 쓸 때만 전체를 불러오는 구조입니다.
 자동 정리(컴팩션) 시 전체 내용은 정리되고 설명만 남습니다.
-![Pasted image 20260419141336.png](app://833c599d816d68a5dfe5a2b0c9c10cc381dd/Users/fujii0711/Documents/Obsidian/DevNote/06.%20Link%20Images/Pasted%20image%2020260419141336.png?1776575616316)  
+
+![[Pasted image 20260520175630.png]]  
 아무리 좋은 규칙을 만들어도 이 컨텍스트 윈도우가 꽉 차버리면 AI가 앞에서 뭘했는지 잊어버리고 나쁜 품질의 코드를 작성해준다. 스킬은 이 문제를 깔끔하게 해결해준다. 필요할 때만 불러오고 쓰고 나면 알아서 치워준다.
 
 #### (2) CLAUDE.md 🆚 Skills
@@ -73,12 +75,10 @@
 - 둘 다 잡고 싶으면 Skiils + context: fork(평소엔 가볍고, 실행은 별도 공간에서)
 - '뭐가 제일 좋아?' 가 아니라, 언제 공간을 아끼고 싶은지에 따라 선택이 달라진다.  
 각각 쓰임새가 다르니까. 상황에 맞에 섞어 쓰는 것이 핵심이다.
-![Pasted image 20260419141903.png](app://833c599d816d68a5dfe5a2b0c9c10cc381dd/Users/fujii0711/Documents/Obsidian/DevNote/06.%20Link%20Images/Pasted%20image%2020260419141903.png?1776575943607)
-
-![Pasted image 20260419142659.png](app://833c599d816d68a5dfe5a2b0c9c10cc381dd/Users/fujii0711/Documents/Obsidian/DevNote/06.%20Link%20Images/Pasted%20image%2020260419142659.png?1776576419674)  
-
-![Pasted image 20260419142752.png](app://833c599d816d68a5dfe5a2b0c9c10cc381dd/Users/fujii0711/Documents/Obsidian/DevNote/06.%20Link%20Images/Pasted%20image%2020260419142752.png?1776576472760) 
-![Pasted image 20260419142840.png](app://833c599d816d68a5dfe5a2b0c9c10cc381dd/Users/fujii0711/Documents/Obsidian/DevNote/06.%20Link%20Images/Pasted%20image%2020260419142840.png?1776576520677)
+![[Pasted image 20260419141903.png]]
+![[Pasted image 20260419142659.png]]
+![[Pasted image 20260419142752.png]]
+![[Pasted image 20260419142840.png]]
 
 ### 5. SKILL.md 작성법
 ```ㅡ
@@ -110,7 +110,7 @@ description: "PPT 발표자료 자동 생성. 'PPT 만들어줘',
 핵심 기능이 첫 문장에, 사용자가 쓸 법한 표현 3개 이상 포함할 것.
 
 ### 6. 스킬 만들기
-![Pasted image 20260419142951.png](app://833c599d816d68a5dfe5a2b0c9c10cc381dd/Users/fujii0711/Documents/Obsidian/DevNote/06.%20Link%20Images/Pasted%20image%2020260419142951.png?1776576591467)
+![[Pasted image 20260419142951.png]]
 
 - **방법 1 — 수동:** `mkdir -p ~/.claude/skills/ppt-generator` → [SKILL.md](http://skill.md/) 작성
 - **방법 2 — skill-creator 플러그인 (추천):** `/install-plugin skill-creator` 설치 후 "스킬 만들어줘"라고 말하면 자동 트리거
@@ -118,7 +118,7 @@ description: "PPT 발표자료 자동 생성. 'PPT 만들어줘',
 💡skill-creator는 description 최적화, frontmatter 설정, 지원 파일 구성까지 **스킬 작성 모범 사례를 자동 적용**해서 [SKILL.md](http://skill.md/)를 만들어줍니다.
 
 ### 7. 스킬 저장 위치
-![Pasted image 20260419150840.png](app://833c599d816d68a5dfe5a2b0c9c10cc381dd/Users/fujii0711/Documents/Obsidian/DevNote/06.%20Link%20Images/Pasted%20image%2020260419150840.png?1776578920896)
+![[Pasted image 20260419150840.png]]
 
 | 위치             | 경로                                 | 적용 대상               |
 | -------------- | ---------------------------------- | ------------------- |
