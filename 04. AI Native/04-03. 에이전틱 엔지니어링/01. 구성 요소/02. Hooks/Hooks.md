@@ -1,4 +1,4 @@
-![[Pasted image 20260520174148.png]]
+![[Pasted image 20260419152551.png]]
 ### 1. Hook이란?
 
 Claude Code의 **자동화 엔진**입니다. 이벤트가 발생하면 matcher가 조건을 검사하고, 조건이 맞으면 지정된 액션이 자동으로 실행됩니다.
@@ -9,7 +9,7 @@ Claude Code의 **자동화 엔진**입니다. 이벤트가 발생하면 matcher
 
 ### 2. Hook 만들기
 
-![[Pasted image 20260520174203.png]]
+![[Pasted image 20260419155649.png]]
 
 - **방법 1 — Claude에게 요청 (추천):** "알림 Hook 만들어줘"라고 말하면 settings.json에 자동 추가
 - **방법 2 — settings.json 직접 편집:** `~/.claude/settings.json` (개인용) 또는 `.claude/settings.json` (프로젝트용)
@@ -43,7 +43,7 @@ Claude Code의 **자동화 엔진**입니다. 이벤트가 발생하면 matcher
 
 ### 4. 이벤트 타입
 
-![[Pasted image 20260520174528.png]]
+![[Pasted image 20260419160306.png]]
 
 |이벤트|타이밍|설명|
 |---|---|---|
