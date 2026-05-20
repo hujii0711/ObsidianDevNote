@@ -53,6 +53,7 @@ Claude 프롬프트에서 `!`를 붙이면 대화를 끊지 않고 터미널 명
 ```
 
 > 안 쓰는 MCP는 `/mcp`에서 비활성화
+
 ### 4. 명령어 Quick Reference
 - `/init` [claude.md](http://claude.md) 자동 생성
 - `/clear` 컨텍스트 초기화 (새 작업 시작 시)
