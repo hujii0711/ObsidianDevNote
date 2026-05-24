@@ -2,7 +2,7 @@ Claude Code에서 Playwright E2E 테스트를 담당하는 서브에이전트를
 
 ---
 
-## 전체 아키텍처
+### 1. 전체 아키텍처
 
 ```
 메인 Claude Code
@@ -11,9 +11,7 @@ Claude Code에서 Playwright E2E 테스트를 담당하는 서브에이전트를
 └── PR 생성 에이전트
 ```
 
----
-
-## 1. CLAUDE.md에 서브에이전트 역할 정의
+### 2. CLAUDE.md에 서브에이전트 역할 정의
 
 ```markdown
 # CLAUDE.md
@@ -40,9 +38,7 @@ Claude Code에서 Playwright E2E 테스트를 담당하는 서브에이전트를
 - 테스트 통과율 100% 달성 후 PR 허용
 ```
 
----
-
-## 2. Playwright 설정
+### 3. Playwright 설정
 
 ```bash
 # 설치
@@ -87,9 +83,7 @@ export default defineConfig({
 });
 ```
 
----
-
-## 3. 서브에이전트 실행 스크립트
+### 4. 서브에이전트 실행 스크립트
 
 ```bash
 #!/bin/bash
@@ -163,9 +157,7 @@ ${report.failures.map(f =>
 `);
 ```
 
----
-
-## 4. E2E 테스트 파일 구조
+### 5. E2E 테스트 파일 구조
 
 ```
 e2e/
@@ -206,37 +198,30 @@ test.describe('인증 플로우 @auth', () => {
 });
 ```
 
----
+### 6. 메인 에이전트와 연동
 
-## 5. 메인 에이전트와 연동
-
-````markdown
+```markdown
 # .claude/commands/test-and-fix.md
 
 ## E2E 테스트 서브에이전트 워크플로우
 
 코드 수정 완료 후 다음 순서로 실행:
+```
 
-### Step 1: 서브에이전트 실행
+##### Step 1: 서브에이전트 실행
 ```bash
 bash scripts/playwright-agent.sh all
 ````
 
-### Step 2: 결과 분석
-
+##### Step 2: 결과 분석
 - `test-results/agent-report.md` 읽기
 - 실패한 테스트 목록 확인
 
-### Step 3: 판단
-
+##### Step 3: 판단
 - PASS → PR 생성 진행
 - FAIL → 실패 원인 분석 후 사용자에게 보고 (테스트 실패는 코드를 수정하지 말고 반드시 보고할 것)
 
-````
-
----
-
-## 6. GitHub Actions 연동
+### 6. GitHub Actions 연동
 
 ```yaml
 # .github/workflows/e2e.yml
@@ -270,12 +255,9 @@ jobs:
           path: |
             playwright-report/
             test-results/
-````
+```
 
----
-
-## 전체 자동화 흐름
-
+> 전체 자동화 흐름
 ```
 Claude Code 코드 수정
         ↓
@@ -290,9 +272,7 @@ PR 생성    스크린샷 + 에러 보고
          사용자 확인 후 수정 결정
 ```
 
----
-
-## 핵심 포인트
+### 7. 핵심 포인트
 
 |요소|역할|
 |---|---|
