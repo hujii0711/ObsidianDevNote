@@ -88,13 +88,13 @@ jobs:
 
 ## 피드백 루프 위치별 적합한 도구
 
-| 피드백 루프 위치 | 적합한 방법 | GitHub Actions 필요? |
-|----------------|------------|-------------------|
-| 툴 실행 전/후 검증 | **Hooks** (PreToolUse/PostToolUse) | ❌ |
-| 자기검증 루프 | **멀티 에이전트** (생성+평가 분리) | ❌ |
-| PR/커밋 후 CI 피드백 | **GitHub Actions** | ✅ |
-| 장기 세션 컨텍스트 관리 | **Context Reset + Compaction** | ❌ |
-| 보안/가드레일 강제 | **Guardrail Engine (Go binary)** | ❌ |
+| 피드백 루프 위치      | 적합한 방법                             | GitHub Actions 필요? |
+| -------------- | ---------------------------------- | ------------------ |
+| 툴 실행 전/후 검증    | **Hooks** (PreToolUse/PostToolUse) | ❌                  |
+| 자기검증 루프        | **멀티 에이전트** (생성+평가 분리)             | ❌                  |
+| PR/커밋 후 CI 피드백 | **GitHub Actions**                 | ✅                  |
+| 장기 세션 컨텍스트 관리  | **Context Reset + Compaction**     | ❌                  |
+| 보안/가드레일 강제     | **Guardrail Engine (Go binary)**   | ❌                  |
 
 ---
 

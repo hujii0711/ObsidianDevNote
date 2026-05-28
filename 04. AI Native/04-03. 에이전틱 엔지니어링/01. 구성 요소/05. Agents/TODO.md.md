@@ -10,7 +10,7 @@
 - [ ] 버그 #2: 모바일 레이아웃 깨짐
 ```
 
-![Pasted image 20260419135507.png](app://833c599d816d68a5dfe5a2b0c9c10cc381dd/Users/fujii0711/Documents/Obsidian/DevNote/06.%20Link%20Images/Pasted%20image%2020260419135507.png?1776574507387)  
+![[Pasted image 20260419135507.png]]
 
 > **실전 워크플로우:**
 1. 하루 시작 — 할 일을 [TODO.md](http://todo.md/)에 체크리스트로 작성
