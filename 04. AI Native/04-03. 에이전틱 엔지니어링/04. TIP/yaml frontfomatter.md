@@ -1,4 +1,7 @@
 
+> 1. **YAML Frontmatter** (에이전트가 언제 이 스킬을 쓸지 결정하는 인덱스 정보)
+> 2. **Markdown Body** (에이전트가 수행해야 할 상세한 워크플로우 지침)
+
 ## YAML frontmatter 지원 필드 전체 목록
 
 필수 필드는 `name`과 `description` 두 가지뿐이며, 나머지는 모두 선택입니다.
