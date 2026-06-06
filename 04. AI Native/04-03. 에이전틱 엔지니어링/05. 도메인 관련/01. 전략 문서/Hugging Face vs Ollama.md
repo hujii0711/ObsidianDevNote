@@ -1,8 +1,4 @@
 
-## Hugging Face vs Ollama — 깊이 있는 비교
-
----
-
 ### 🗺️ 전체 구조 이해
 
 ```
