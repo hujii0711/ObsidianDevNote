@@ -57,8 +57,8 @@ packages
  ┃ ┃ ┗ rag  
  ┃ ┃ ┃ ┣ __init__.py  
  ┃ ┃ ┃ ┣ citations.py  (인용.출처 처리)
- ┃ ┃ ┃ ┣ config.py  
- ┃ ┃ ┃ ┣ embedder.py  (질의 임베딩)
+ ┃ ┃ ┃ ┣ config.py (RAG Config)
+ ┃ ┃ ┃ ┣ embedder.py  (질의 임베딩) 
  ┃ ┃ ┃ ┣ prompt.py  (컨텍스트 주입 프롬프트(build_messages, 서빙.학습 입력 공통))
  ┃ ┃ ┃ ┣ retriever.py  (Chroma 검색)
  ┃ ┃ ┃ ┗ types.py 
