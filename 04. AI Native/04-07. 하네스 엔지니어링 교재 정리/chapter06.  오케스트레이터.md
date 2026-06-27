@@ -8,4 +8,4 @@
 | 메시지   | SendMessage           | 팀원 간 직접 메시지             | 발견 사항 공유, 상호 참조, 짧은 피드백 |
 | 파일 규약 | `_workspace/*,md`     | 대용량 산출물 저장, 단계 간 인계     | 중간 산출물을 저장. 교환할 때       |
 
-
+- 프리미티브(기본 도구): TeamCreate/TaskCreate/SendMessage
