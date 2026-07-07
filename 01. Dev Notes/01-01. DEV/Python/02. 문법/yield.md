@@ -185,3 +185,70 @@ print(list(result))  # [0, 20, 40, 60, 80]
 | 사용 상황 | 일반 함수 | 대용량/스트리밍 |
 
 **한 줄 요약:** `yield`는 **"지금 이 값 줄게, 나중에 다시 와"** 라고 실행을 멈추는 마법의 키워드!
+
+
+---
+
+## 파이썬의 yield는 스트림 처리와 유사한가?
+
+개념적으로 상당히 유사합니다. 핵심을 짚어보겠습니다.
+
+## 왜 비슷한가
+
+`yield`를 사용하는 제너레이터(generator)는 **모든 데이터를 한 번에 메모리에 올리지 않고, 필요할 때마다 하나씩 값을 흘려보낸다**는 점에서 스트림 처리와 철학이 같습니다.
+
+```python
+def read_large_file(path):
+    with open(path) as f:
+        for line in f:
+            yield line.strip()  # 한 줄씩 "흘려보냄"
+
+for line in read_large_file("huge.log"):
+    process(line)
+```
+
+이 코드는 파일 전체를 리스트로 읽어들이지 않고, 한 줄씩 생성-소비를 반복합니다. Java의 Stream API, Node.js의 Readable Stream, Unix 파이프(`cmd1 | cmd2`)와 같은 지연 평가(lazy evaluation) + 순차적 데이터 흐름이라는 점에서 동일한 패턴입니다.
+
+## 공통점
+
+|특징|스트림|`yield` (제너레이터)|
+|---|---|---|
+|지연 계산|O (필요할 때 계산)|O|
+|메모리 효율|O (전체를 안 들고 있음)|O|
+|파이프라인 구성|O (`stream.map().filter()`)|O (제너레이터 체이닝)|
+|무한 시퀀스 처리 가능|O|O|
+
+제너레이터끼리 연결하면 실제로 파이프라인처럼 동작합니다:
+
+```python
+def numbers():
+    n = 0
+    while True:
+        yield n
+        n += 1
+
+def evens(stream):
+    for x in stream:
+        if x % 2 == 0:
+            yield x
+
+def squared(stream):
+    for x in stream:
+        yield x ** 2
+
+pipeline = squared(evens(numbers()))
+for i, val in zip(range(5), pipeline):
+    print(val)  # 0, 4, 16, 36, 64
+```
+
+이건 함수형 언어나 RxJava/RxPY 같은 리액티브 스트림 라이브러리에서 하는 `map`/`filter` 체이닝과 본질적으로 같은 구조입니다.
+
+## 차이점 (구분해둘 부분)
+
+- **Push vs Pull**: `yield`는 기본적으로 **pull 기반**입니다 — 소비자가 `next()`를 호출해야 값이 나옵니다. 반면 진짜 "스트림"(예: 이벤트 스트림, Reactive Streams)은 종종 **push 기반**으로, 생산자가 준비되는 대로 값을 밀어 넣습니다.
+- **비동기 여부**: `yield`는 기본적으로 동기적입니다. 비동기 스트림을 다루려면 `async def` + `yield`로 만드는 **비동기 제너레이터**(`async for`로 순회)가 필요합니다.
+- **백프레셔(backpressure)**: Node.js 스트림처럼 버퍼가 가득 찼을 때 생산 속도를 자동 조절하는 기능은 순수 제너레이터엔 없습니다. pull 기반이라 소비자가 속도를 자연스럽게 제어하긴 하지만, 명시적인 백프레셔 메커니즘은 아닙니다.
+
+## 정리
+
+`yield`는 파이썬에서 **스트림 처리를 구현하는 가장 기본적이고 가벼운 도구**라고 보면 정확합니다. 다만 "스트림"이라는 단어가 가리키는 더 큰 개념(비동기, push 기반, 백프레셔 등)의 일부만 다루는 것이니, 진짜 대규모 스트림 처리(예: Kafka consumer, 비동기 이벤트 스트림)를 만든다면 `asyncio`의 비동기 제너레이터나 관련 라이브러리(`aiostream` 등)로 확장해서 써야 합니다.
