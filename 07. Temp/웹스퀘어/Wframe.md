@@ -51,4 +51,4 @@ WFrame을 포함하는 화면을 부모 WFrame의 소스(`src`) 화면으로 생
 ![[Pasted image 20260712223811.png]]
 
 - `"component"` : 부모 영역의 객체를 자동으로 참조하지만, `$p.main()` 함수는 (`$p.top()` 함수와 동일하게 실행되어) 최상단 페이지에 접근 가능.
-- ![[Pasted image 20260712223846.png]]
+ ![[Pasted image 20260712223846.png]]
