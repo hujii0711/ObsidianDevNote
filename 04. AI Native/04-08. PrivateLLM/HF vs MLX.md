@@ -55,6 +55,60 @@ collection.add(embeddings=vectors, documents=chunks, ids=ids)
 results = collection.query(query_embeddings=[query_vec], n_results=5)
 ```
 
+---
+각 줄을 순서대로 설명해드리겠습니다.
+
+```python
+import chromadb
+```
+
+**ChromaDB 라이브러리를 불러옵니다.** ChromaDB는 벡터 데이터베이스(Vector DB)로, 텍스트나 이미지 등을 임베딩(벡터)으로 변환해 저장하고 유사도 검색을 수행할 수 있게 해주는 오픈소스 라이브러리입니다.
+
+```python
+client = chromadb.PersistentClient(path="./db")
+```
+
+**영구 저장 방식의 클라이언트를 생성합니다.**
+
+- `PersistentClient`는 데이터를 디스크에 저장해서, 프로그램이 종료되어도 데이터가 남아있게 합니다.
+- `path="./db"`는 데이터베이스 파일들이 저장될 로컬 경로를 지정합니다 (현재 디렉토리 아래 `db` 폴더).
+- (참고로 `chromadb.Client()`를 쓰면 메모리에만 저장되는 임시(In-memory) 클라이언트가 생성됩니다.)
+
+```python
+collection = client.get_or_create_collection("docs")
+```
+
+**"docs"라는 이름의 컬렉션을 가져오거나, 없으면 새로 생성합니다.**
+
+- 컬렉션(collection)은 관계형 DB의 "테이블"과 비슷한 개념으로, 벡터·문서·메타데이터 등을 묶어서 관리하는 단위입니다.
+- 이미 "docs" 컬렉션이 존재하면 그걸 불러오고, 없으면 새로 만들어줍니다.
+
+```python
+collection.add(embeddings=vectors, documents=chunks, ids=ids)
+```
+
+**컬렉션에 데이터를 추가(저장)합니다.**
+
+- `embeddings=vectors`: 각 문서(청크)에 대응하는 임베딩 벡터 리스트 (예: `[[0.1, 0.2, ...], [0.3, 0.5, ...], ...]`)
+- `documents=chunks`: 원본 텍스트 조각들의 리스트 (임베딩과 1:1 대응되는 실제 텍스트 내용)
+- `ids=ids`: 각 항목을 구분하는 고유 ID 리스트 (문자열, 예: `["doc1", "doc2", ...]`)
+- 세 리스트는 **같은 순서, 같은 길이**여야 하며, 인덱스별로 서로 매칭됩니다.
+
+```python
+results = collection.query(query_embeddings=[query_vec], n_results=5)
+```
+
+**저장된 벡터들 중에서 쿼리 벡터와 가장 유사한 항목들을 검색합니다.**
+
+- `query_embeddings=[query_vec]`: 검색하고 싶은 질의(쿼리)를 임베딩한 벡터. 리스트 형태로 감싸는 이유는 여러 개의 쿼리를 한 번에 batch로 검색할 수도 있기 때문입니다.
+- `n_results=5`: 유사도가 가장 높은 상위 5개의 결과를 반환하라는 의미입니다.
+- 기본적으로 코사인 유사도(또는 설정된 거리 함수)를 기준으로 가장 가까운 벡터들을 찾아, 해당하는 `documents`, `ids`, `distances`(거리/유사도 점수), `metadatas` 등을 `results`에 담아 반환합니다.
+
+**전체 흐름 요약:** 이 코드는 전형적인 **RAG(Retrieval-Augmented Generation)** 파이프라인의 일부로, 문서들을 벡터화해서 저장해두었다가(`add`), 사용자 질의가 들어오면 그 질의도 벡터화해서 저장된 문서 중 의미적으로 가장 유사한 것들을 찾아내는(`query`) 역할을 합니다. 이렇게 찾은 결과는 보통 이후 LLM에 컨텍스트로 넘겨져 답변 생성에 활용됩니다.
+
+---
+
+
 **정리하면**
 
 | 구성요소   | 일반 환경                  | MLX                      |
