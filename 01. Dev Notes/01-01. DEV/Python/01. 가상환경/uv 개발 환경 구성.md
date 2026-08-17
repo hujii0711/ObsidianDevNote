@@ -18,7 +18,7 @@ To add $HOME/.local/bin to your PATH, either restart your shell or run:
 source ~/.zshrc
 ```
 
-#### 2. 가상 환경 만들기
+#### 2. 가상 환경 만들기 --> 비권장
 
 ``` zsh
 # 현재 폴더에 .venv 생성 (기본)
@@ -37,7 +37,7 @@ uv venv myenv --python 3.12
 source .venv/bin/activate
 
 # 의존성 설치
-pip install requests # 또는 uv pip install
+uv pip install requests
 
 # 비활성화
 deactivate
@@ -49,7 +49,7 @@ deactivate
 - `requirements.txt`를 직접 관리해야 함
 - 기존 `pip` + `venv` 방식과 거의 동일한 워크플로우
 
-#### 3. 프로젝트 통합 워크플로우 생성
+#### 3. 프로젝트 통합 워크플로우 생성 --> 권장
 uv를 이용하여 프로젝트 전체를 관리하는 더 편한 방법이다.
 ```zsh
 # 새 프로젝트 생성 (pyproject.toml 자동 생성)

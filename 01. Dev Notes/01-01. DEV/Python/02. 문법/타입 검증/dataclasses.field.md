@@ -45,6 +45,13 @@ class Example:
 | `hash`            | bool | `__hash__` 계산에 포함 여부               |
 | `metadata`        | dict | 필드에 임의 메타데이터 부착                    |
 
+`field(default_factory=list)`는 "기본값 자체를 저장하는 게 아니라, **인스턴스가 생성될 때마다 `list()`라는 함수를 새로 호출**해서 그 결과를 기본값으로 써라"라는 뜻입니다. 인스턴스마다 독립된 새 리스트가 생성됨
+**왜 필요한가**: 리스트, 딕셔너리, 세트 같은 **가변(mutable) 객체**를 기본값으로 쓰면, 모든 인스턴스가 그 객체 하나를 공유해버리는 파이썬의 근본적인 함정이 있어요. `default_factory`는 "매번 새로 만들어라"는 지시를 통해 이 함정을 피하게 해주는 dataclass의 안전장치입니다.
+
+`tags: list = []` : dataclass가 아예 `ValueError`로 막음 (위험하기 때문)
+
+反면 `str`, `int`, `bool`처럼 **불변(immutable) 객체**는 이런 문제가 없어서 `name: str = field(default="홍길동")`처럼 그냥 `default=`로 지정해도 안전합니다.
+
 ---
 
 ### `field()` 없이 vs 있을 때 비교
