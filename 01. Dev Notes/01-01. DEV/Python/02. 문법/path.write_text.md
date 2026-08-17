@@ -2,7 +2,26 @@
 이 한 줄은 **파이썬 객체를 JSON 문자열로 만들어서 파일에 저장**하는 코드입니다. 안쪽부터 설명드릴게요.
 
 ```python
-path.write_text(json.dumps(obj, ensure_ascii=False, indent=2), encoding="utf-8")
+import json
+from pathlib import Path
+
+# 1. 저장할 파이썬 데이터 (딕셔너리 또는 리스트)
+data = {
+	"project": "파이썬 가이드",
+	"version": 1.0,
+	"author": "홍길동",
+	"features": ["가변 인자", "파일 입출력", "JSON 처리"],
+	"is_active": True
+}
+
+# 2. 저장할 파일 경로 설정 (현재 디렉토리의 'output.json' 파일)
+path = Path("output.json")
+
+# 3. JSON 문자열로 변환 후 파일에 쓰기
+# - ensure_ascii=False: 한글이 유니코드(\uXXXX)로 깨지는 것을 방지하고 원본 한글로 저장
+# - indent=2: 들여쓰기 2칸을 주어 사람이 읽기 쉽도록 포맷팅
+# - encoding="utf-8": 한글 및 특수문자가 깨지지 않도록 UTF-8 인코딩 지정
+path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 ```
 
 ## 1단계: `json.dumps(obj, ensure_ascii=False, indent=2)`
