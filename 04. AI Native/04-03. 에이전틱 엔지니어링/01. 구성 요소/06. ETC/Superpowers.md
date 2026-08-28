@@ -139,3 +139,35 @@ Day 5: 베타 유저에게 공개 🎉
 MVP에서 가장 중요한 **아이디어 검증 속도**를 극대화할 수 있고, 혼자서도 풀스택 앱을 빠르게 완성할 수 있습니다.
 
 어떤 MVP를 만들려고 하시는지 말씀해주시면 더 구체적인 방법을 알려드릴게요!
+
+
+---
+#### Superpowers 설정 확인
+
+**전역(global)으로 활성화되어 있습니다.** 확인한 근거는 다음과 같습니다.
+
+**1. 사용자 전역 설정에 등록됨** — `C:\Users\hujii\.claude\settings.json` (user scope, 모든 프로젝트에 적용)
+
+```json
+"enabledPlugins": { "superpowers@superpowers-marketplace": true },
+"extraKnownMarketplaces": { "superpowers-marketplace": { "source": { "source": "github", "repo": "obra/superpowers-marketplace" } } }
+```
+
+**2. 설치 스코프가 `user`** — `~/.claude/plugins/installed_plugins.json`
+
+```
+scope: "user"  →  ~/.claude/plugins/cache/superpowers-marketplace/superpowers/6.2.0
+```
+
+**3. 현재 프로젝트에서 실제로 동작 중** — `c:\websquare-ai-agent`에는 `.claude` 디렉터리도 없고 `~/.claude.json`의 projects 항목에도 등록돼 있지 않지만, 이번 세션에 SessionStart 훅으로 `using-superpowers` 스킬이 주입되었습니다. 프로젝트 설정이 전혀 없는데도 로드된다는 것 자체가 전역 적용의 증거입니다.
+
+**설치 상태 요약**
+
+|항목|값|
+|---|---|
+|버전|6.2.0 (commit `3dcbd5c`)|
+|스킬 수|14개 (brainstorming, systematic-debugging, TDD, writing-plans 등)|
+|훅|`hooks/session-start` (매 세션 시작 시 주입)|
+|마켓플레이스|github: `obra/superpowers-marketplace`|
+
+**참고로 정리해두면 좋을 점**: user 스코프 외에 `scope: "project"` 항목이 3개(`c:\WEBTOP_RM_PACK\workspace`, `c:\PrivateLLM`, `c:\WEBTOP_RM_PACK\workspace\iworks4-src`) 더 있는데, 모두 동일한 설치 경로를 가리키는 중복 등록입니다. 전역 설치가 이미 있으므로 기능상 의미는 없고, 정리하려면 해당 프로젝트에서 `/plugin` 으로 제거하면 됩니다.
