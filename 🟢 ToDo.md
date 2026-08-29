@@ -4,3 +4,7 @@
 - .env에 환경변수 적용된 상태로 디버그 모드 실행하는 방법
 - oleColorCss 제거 여부
 - 모델 로드 방식: 허깅페이스, Ollama
+- 허깅페이스 교재에서 예제 dataset, model --> 허깅페이스에서 직접 확인
+- 클로드 코드 교재(주홍철) 순한맛 정리
+- TreeDBNote Websquare을 옵시디언으로 정리
+- 
