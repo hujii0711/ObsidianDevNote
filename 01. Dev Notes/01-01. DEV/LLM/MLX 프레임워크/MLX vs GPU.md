@@ -280,9 +280,7 @@ python -m mlx_lm.lora \
 
 다양한 최적화 라이브러리를 소스코드 레벨에서 유기적으로 결합해야 하므로, 명시적인 파이썬 코드가 필요합니다.
 
-Python
-
-```
+```python
 import torch
 from transformers import AutoModelForCausalLM, BitsAndBytesConfig
 from peft import LoraConfig, get_peft_model
@@ -316,3 +314,89 @@ model = get_peft_model(model, peft_config)
 - **MLX**는 **`mlx-lm`** 하나만 제대로 다룰 줄 알면 양자화, 데이터 로드, LoRA 학습까지 올인원으로 해결되는 **맥 생태계 특유의 깔끔함과 높은 추상화**가 장점입니다.
     
 - 일반 GPU(CUDA)는 환경 설정과 라이브러리 의존성(`torch`, `peft`, `bitsandbytes`, `flash-attn` 등)을 맞추는 초기 셋업 공수는 들지만, **미세한 하이퍼파라미터 튜닝이나 최신 논문의 가속 기법을 유연하게 커스텀**하기에 강력한 구조를 갖고 있습니다.
+
+---
+---
+
+## RAG 기본 코드 차이
+
+MLX(애플 실리콘)와 GPU(CUDA) 환경에서 RAG 시스템을 만들 때 로직 자체(청킹→임베딩→벡터검색→LLM 생성)는 동일하지만, **프레임워크·라이브러리·디바이스 관리 방식**이 달라 소스 코드에 실질적인 차이가 생깁니다. 주요 지점별로 비교해 드릴게요.
+
+## 1. 임베딩 모델 로딩 & 추론
+
+**GPU(CUDA) 환경 — sentence-transformers**
+
+```python
+from sentence_transformers import SentenceTransformer
+
+model = SentenceTransformer("all-MiniLM-L6-v2", device="cuda")
+embeddings = model.encode(documents, batch_size=64, convert_to_tensor=True)
+```
+
+**MLX 환경 — mlx-embeddings 사용**
+
+```python
+import mlx_embeddings
+import mlx.core as mx
+
+model, tokenizer = mlx_embeddings.load("mlx-community/all-MiniLM-L6-v2-4bit")
+output = mlx_embeddings.generate(model, tokenizer, texts=documents)
+embeddings = output.text_embeds  # 이미 정규화됨
+```
+
+차이점: mlx-embeddings 패키지를 설치하고 mlx-community에서 변환된 MLX 포맷 모델을 로드해 임베딩을 생성하며, 정규화된 임베딩 벡터를 얻어 정규화된 임베딩 간 내적을 계산해 유사도 행렬을 만드는 방식입니다. CUDA 쪽은 `device="cuda"` 지정과 `.to(device)` 같은 명시적 디바이스 이동이 필요한 반면, MLX는 통합 메모리 구조 덕분에 디바이스 지정 코드가 아예 없습니다.
+
+또는 MLX·Milvus 조합에서는 mlx_lm으로 모델을 로드하고, 검색 부분은 sentence-transformers의 경량 임베딩 모델을 CPU에서 그대로 쓰는 하이브리드 구성도 흔합니다 — MLX 생태계에 임베딩 전용 라이브러리가 아직 CUDA만큼 성숙하지 않기 때문입니다.
+
+## 2. LLM 로딩 & 생성
+
+**GPU/CUDA — transformers 또는 vLLM**
+
+```python
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
+
+tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-7B-Instruct")
+model = AutoModelForCausalLM.from_pretrained(
+    "Qwen/Qwen2.5-7B-Instruct", torch_dtype=torch.bfloat16
+).to("cuda")
+
+inputs = tokenizer(prompt, return_tensors="pt").to("cuda")
+output = model.generate(**inputs, max_new_tokens=512)
+```
+
+**MLX — mlx-lm**
+
+```python
+from mlx_lm import load, generate
+
+model, tokenizer = load("mlx-community/Qwen2.5-7B-Instruct-4bit")
+prompt = tokenizer.apply_chat_template(messages, add_generation_prompt=True)
+text = generate(model, tokenizer, prompt=prompt, verbose=True)
+```
+
+차이점: CUDA 쪽은 `.to("cuda")`, dtype 캐스팅, 종종 `torch.no_grad()` 컨텍스트, 배치 패딩/attention mask 관리가 필요합니다. MLX는 `load`/`generate` 두 함수로 끝나며, 대부분 모델이 4bit 등으로 사전 양자화되어 있어 별도 양자화 코드가 거의 필요 없습니다.
+
+## 3. 벡터 유사도 계산
+
+- **CUDA/PyTorch**: `torch.matmul`, `sentence_transformers.util.cos_sim`, 또는 FAISS-GPU (`faiss.StandardGpuResources()`, `index_cpu_to_gpu()`)
+- **MLX**: `mx.matmul(embeddings, embeddings.T)`처럼 정규화된 임베딩 간 내적으로 유사도 행렬을 직접 계산하는 경우가 많고, FAISS는 GPU 버전이 없어 대개 CPU FAISS나 Chroma/Milvus 같은 외부 벡터 DB에 위임합니다.
+
+## 4. 구조적 차이 요약
+
+|항목|GPU(CUDA)|MLX|
+|---|---|---|
+|텐서 라이브러리|PyTorch/torch.cuda|mlx.core|
+|디바이스 관리|`.to("cuda")` 명시적 이동 필요|통합 메모리, 디바이스 코드 불필요|
+|임베딩 생태계|sentence-transformers 성숙|mlx_lm 자체에는 아직 미지원, 커뮤니티 패키지(mlx-embeddings 등)에 의존|
+|모델 포맷|HF safetensors 그대로|mlx-community에서 재변환된 MLX 포맷 필요|
+|벡터 검색 가속|FAISS-GPU, cuVS 등 GPU 인덱스 가능|GPU 인덱스 없음, CPU 인덱스나 외부 벡터DB(Milvus/Chroma) 사용|
+|양자화|bitsandbytes, AWQ 등 별도 설정|대부분 사전 양자화된 모델을 다운로드해 바로 사용|
+|배치 처리|대규모 배치·멀티GPU 병렬화에 강함|단일 기기(Mac) 내 통합 메모리라 대용량 배치엔 상대적으로 제약|
+
+## 5. 실무 팁
+
+- MLX 임베딩 생태계는 아직 CUDA만큼 성숙하지 않아, 대량 임베딩(수만~수십만 건)이 필요하면 MLXEmbedders처럼 BERT 계열 모델과 다양한 풀링 전략을 지원하는 라이브러리를 쓰거나, 임베딩 단계만 CPU sentence-transformers로 처리하는 하이브리드 방식이 실용적입니다.
+- 벡터 DB(Chroma, Milvus, LangChain의 vectorstore 래퍼)는 CUDA/MLX 어느 쪽이든 동일 API로 쓸 수 있어, 실제로 코드가 갈라지는 지점은 "임베딩 생성"과 "LLM 추론" 두 곳에 집중됩니다.
+
+특정 임베딩 모델이나 벡터DB(FAISS, Chroma, Milvus 등)를 기준으로 더 구체적인 전체 RAG 파이프라인 코드가 필요하시면 말씀해 주세요.
