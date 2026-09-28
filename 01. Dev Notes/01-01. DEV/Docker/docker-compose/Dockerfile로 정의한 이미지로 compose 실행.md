@@ -47,13 +47,13 @@ services:
 
 ## 3. 빌드는 언제 일어나는가
 
-|상황|동작|
-|---|---|
-|`docker compose up -d`|이미지가 없으면 빌드하고, **이미 있으면 재빌드하지 않습니다**|
-|`docker compose up -d --build`|항상 다시 빌드한 뒤 시작|
-|`docker compose build`|빌드만 수행 (특정 서비스만: `build api`)|
-|`docker compose build --no-cache`|캐시 없이 처음부터 빌드|
-|`docker compose build --pull`|베이스 이미지도 최신으로 다시 받아 빌드|
+| 상황                                | 동작                                   |
+| --------------------------------- | ------------------------------------ |
+| `docker compose up -d`            | 이미지가 없으면 빌드하고, **이미 있으면 재빌드하지 않습니다** |
+| `docker compose up -d --build`    | 항상 다시 빌드한 뒤 시작                       |
+| `docker compose build`            | 빌드만 수행 (특정 서비스만: `build api`)        |
+| `docker compose build --no-cache` | 캐시 없이 처음부터 빌드                        |
+| `docker compose build --pull`     | 베이스 이미지도 최신으로 다시 받아 빌드               |
 
 코드나 Dockerfile을 고쳤는데 반영이 안 된다면 대부분 `--build`를 빠뜨린 경우입니다. 항상 다시 빌드되게 하려면 서비스에 `pull_policy: build`를 지정할 수 있습니다.
 
