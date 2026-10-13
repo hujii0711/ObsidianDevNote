@@ -106,3 +106,33 @@ mlx_lm.chat --model mlx-community/Llama-3.2-3B-Instruct-4bit
 ### 💡 주요 핵심 파라미터
 - **`tokenize=False`**: `generate` 함수가 입력으로 문자열(`str`)을 받기 때문에 보통 `False`로 설정하여 변환된 프롬프트 텍스트를 얻습니다. (만약 토큰 ID 배열이 필요하다면 `True`로 설정합니다)
 - **`add_generation_prompt=True`**: 대화 끝에 모델이 답변을 시작할 위치임을 알리는 토큰(예: `<|im_start|>assistant\n`)을 붙여주므로, 추론 시 필수적으로 전달해 주는 것이 좋습니다.
+
+---
+
+`mlx_lm.generate`는 **문자열 하나**만 입력으로 받습니다. 그런데 `ChatPromptTemplate`가 만드는 건 **메시지 리스트**(system/human)입니다. 이 리스트를 Qwen 모델이 학습할 때 본 형식의 문자열로 바꿔 주는 함수가 `apply_chat_template`입니다.
+
+### 1. 모델이 학습한 대화 형식을 맞추기 위해
+Qwen 같은 chat/instruct 모델은 특수 토큰으로 역할을 구분한 형식으로 학습됩니다.
+
+```
+<|im_start|>system
+당신은 친절한 한국어 AI 튜터입니다. ...<|im_end|>
+<|im_start|>user
+RAG 시스템에 대해 초보자 수준으로 설명해줘. ...<|im_end|>
+<|im_start|>assistant
+```
+
+이 형식을 직접 문자열로 조립하면 모델마다 형식이 다르고 틀리기도 쉽습니다. 토크나이저에 들어 있는 Jinja 템플릿(`tokenizer_config.json`의 `chat_template`)을 쓰면 모델에 맞는 형식이 자동으로 적용됩니다. 나중에 `MODEL_ID`만 다른 모델로 바꿔도 코드를 고칠 필요가 없습니다.
+
+형식이 틀리면 system 지시를 무시하거나, 답변을 끝내지 않고 user 턴까지 지어내는 등 출력 품질이 크게 떨어집니다.
+
+### 2. 각 인자의 역할 ([main.py:35-40](RAGTest/mvp/06_prompt/main.py#L35-L40))
+| 인자                           | 의미                                                                                                                          |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `messages`                   | `ROLE_MAP`으로 LangChain의 `human`/`ai`를 HF 표준인 `user`/`assistant`로 바꾼 리스트                                                     |
+| `add_generation_prompt=True` | 끝에 `<im_start>assistant\n`을 붙여서 "이제 assistant가 답할 차례"임을 알립니다. 없으면 모델이 대화를 이어서 쓰지 않고 엉뚱하게 생성할 수 있습니다.                        |
+| `tokenize=False`             | 토큰 ID가 아니라 문자열로 돌려받습니다. `generate(prompt=...)`에 그대로 넘기기 위해서입니다.                                                             |
+| `enable_thinking=False`      | Qwen3 계열 템플릿 전용 옵션입니다. `<think>...</think>` 추론 단계를 끄고 바로 답변하게 합니다. 이 옵션이 없으면 출력 앞에 생각 과정이 섞여 `StrOutputParser` 결과가 지저분해집니다. |
+
+### 요약
+LangChain 메시지와 MLX 원시 생성 함수를 잇는 어댑터 역할입니다. `ChatOpenAI`, `ChatOllama` 같은 LangChain 채팅 모델 래퍼는 이 변환을 내부에서 해 주지만, 여기서는 `mlx_lm.generate`를 `RunnableLambda`로 직접 감쌌기 때문에 템플릿 적용을 직접 해야 합니다.
