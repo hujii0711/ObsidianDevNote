@@ -24,11 +24,11 @@
 ### 문법
 
 - GraphError 역할외 파이썬 예외클래스 정의하여 사용하는 방법
-- `def __call__(self, *args, **kwargs):`
-	`raise GraphError(OFFLINE_MESSAGE)`
-	`def __getattr__(self, name: str):`
+- ~~`def __call__(self, *args, **kwargs):`~~
+	~~`raise GraphError(OFFLINE_MESSAGE)`~~
+	~~`def __getattr__(self, name: str):`~~
 - ~~json 읽기 쓰기 파일읽기 파일쓰기~~
-- uv run -m 과 uv run python의 차이
+- ~~uv run -m 과 uv run python의 차이~~
 
 
 ---
