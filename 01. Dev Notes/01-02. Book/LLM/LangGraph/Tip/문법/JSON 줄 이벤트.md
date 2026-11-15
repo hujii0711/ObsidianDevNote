@@ -40,3 +40,39 @@ shorts_web  stdout을 줄 단위로 나눠 JSON.parse → type 이름의 SSE 이
 
 ### 지켜야 할 규칙
 웹이 stdout을 줄 단위로 파싱하므로 stdout에는 이 JSON 줄만 써야 합니다. 그래서 진행 로그나 `print`는 stderr로 보냅니다. 예를 들어 [progress.py](shorts_graph/core/progress.py)의 `emit`은 그래프 밖에서 불리면 stderr에 찍고, [wiring.py](shorts_graph/wiring.py)의 Pixabay 안내도 stderr로 나갑니다. stdout에 다른 글이 섞이면 그 줄은 이벤트로 해석되지 않습니다.
+
+---
+
+`print`가 웹까지 직접 보내는 것은 아닙니다. `print`는 stdout에 한 줄을 쓸 뿐이고, 그 stdout이 **서버로 이어지는 파이프**에 연결되어 있어서 서버가 그 줄을 읽고 브라우저로 넘겨 줍니다.
+
+## 경로
+
+```
+cli.py  print(...)                         stdout에 JSON 한 줄
+   │  (OS 파이프)
+server.js  spawn() → child.stdout          서버가 그 줄을 받음
+   │  readline "line"                       줄 단위로 끊음
+   │  stdoutLineToEvent(line)               JSON 해석 → {event, data}
+   │  res.write(encodeSse(event, data))     "event: progress\ndata: {...}\n\n"
+   │  (끝나지 않고 열려 있는 HTTP 응답, text/event-stream)
+index.html  EventSource addEventListener   화면에 한 줄 추가
+```
+
+1. **`spawn()`이 stdout을 파이프로 연결합니다** ([server.js:56](demo/sse_cli/server.js#L56)). 서버가 CLI를 자식 프로세스로 띄우면, 자식의 stdout은 터미널이 아니라 부모(Node)와 이어진 파이프가 됩니다. 그래서 `print`한 내용이 화면에 찍히지 않고 서버의 `child.stdout`으로 들어갑니다.
+2. **줄 단위로 읽습니다** ([server.js:67](demo/sse_cli/server.js#L67)). `readline`은 청크 경계에서 잘린 줄과 한글(UTF-8 바이트)을 이어 붙여 한 줄씩 넘겨 줍니다. `print`가 끝에 붙이는 `\n`이 줄의 경계가 됩니다.
+3. **JSON을 SSE 형식으로 바꿉니다.** [lib.js:40](demo/sse_cli/lib.js#L40)의 `stdoutLineToEvent`가 JSON을 해석하고, [lib.js:32](demo/sse_cli/lib.js#L32)의 `encodeSse`가 `event:`·`data:` 두 줄과 빈 줄로 만듭니다.
+4. **응답을 끝내지 않고 이어 씁니다.** `Content-Type: text/event-stream`과 `flushHeaders()`로 응답을 먼저 열어 두고([server.js:37-41](demo/sse_cli/server.js#L37-L41)), 이벤트가 생길 때마다 `res.write`로 덧붙입니다.
+5. **브라우저가 받습니다.** `EventSource`는 열린 응답에서 빈 줄이 나올 때마다 이벤트 하나를 꺼내, 이름(`progress` 등)에 맞는 리스너를 부릅니다([index.html:98](demo/sse_cli/index.html#L98)).
+
+## `flush=True`가 필요한 이유
+
+- 출력 대상이 터미널이면 파이썬은 줄마다 내보냅니다(줄 버퍼링).
+- 출력 대상이 파이프면 약 8KB를 모았다가 한꺼번에 내보냅니다(블록 버퍼링).
+- `count 5`의 이벤트 몇 줄은 8KB에 한참 못 미칩니다. 그래서 flush가 없으면 프로세스가 끝날 때까지 버퍼에 남아 있다가 마지막에 한꺼번에 도착합니다. 진행 표시가 실시간으로 움직이지 않게 됩니다.
+- `flush=True`를 주면 줄마다 바로 파이프로 밀어냅니다.
+
+## argparse 버전에서 주의할 점
+
+`redirect_stdout(sys.stderr)` 안에서는 이 `print`가 **stderr로 갑니다**. 그러면 서버가 이 줄을 `stderrLineToEvent`로 받아 `log` 이벤트로 감싸 버리고, 진짜 이벤트(`progress` 등)로 인식하지 못합니다. 그래서 argparse 버전은 redirect하기 전에 `out = sys.stdout`을 잡아 두고 `out.write(...)` + `out.flush()`로 썼습니다. shorts_graph도 같은 방식입니다.
+
+지금 작업 폴더에서는 `cli.py`가 커밋되지 않은 상태로 예전 `print` 버전으로 돌아가 있고, `cli_argparser.py`라는 새 파일이 있습니다. 비교하려고 나눠 두신 것이라면, 서버는 `demo.sse_cli.cli`를 실행하므로 지금은 예전 버전이 돌아갑니다.
