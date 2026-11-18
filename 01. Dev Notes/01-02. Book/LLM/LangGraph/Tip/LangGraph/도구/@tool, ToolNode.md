@@ -160,6 +160,8 @@ tool_node = ToolNode(tools)
 result = tool_node.invoke({"messages": [ai_msg]})
 print(result["messages"])
 # [ToolMessage(content='Seoul: 맑음, 18도', name='get_weather', tool_call_id='call_abc')]
+# 현재 예제는 실행되지 않는다.
+# ToolNode는 그래프 노드로 실행해야 한다.
 ```
 
 `ToolNode`는 `tool_calls`에 적힌 이름으로 도구를 찾아 실행하고, 여러 호출은 병렬로 처리하며, `tool_call_id`를 맞춰 `ToolMessage`를 만들어 줍니다.
@@ -458,3 +460,102 @@ agent.invoke(
 - `bind_tools`는 도구를 리스트로 받으므로 `model.bind_tools([personalized_greeting], parallel_tool_calls=False)`로 써야 합니다. 지금처럼 단일 도구를 그대로 넘기면 오류가 날 수 있습니다.
 - `parallel_tool_calls=False`는 한 번에 도구를 하나씩만 호출하게 하는 옵션이며, 이를 지원하는 모델(OpenAI 계열 등)에서만 동작합니다.
 - `llm_with_tools`는 위 코드에서 `agent`와 연결되어 있지 않아서, 지금 상태로는 따로 쓰이지 않습니다.
+
+---
+model_with_tools = model.bind_tools([get_weather])  
+ai_msg = model_with_tools.invoke("서울 날씨 알려줘")
+
+tool_node = ToolNode([get_weather])  
+result = tool_node.invoke({"messages": [ai_msg]})의 차이
+
+한마디로 정리하면 **`bind_tools`는 어떤 도구를 어떤 인자로 부를지 "결정"만 하고, `ToolNode`는 그 결정대로 함수를 실제로 "실행"합니다.**
+
+## 1. `model.bind_tools()`: 호출 계획 세우기
+
+```python
+model_with_tools = model.bind_tools([get_weather])
+ai_msg = model_with_tools.invoke("서울 날씨 알려줘")
+```
+
+`bind_tools`는 `get_weather`의 이름, docstring, 인자 타입을 JSON 스키마로 바꿔서 API 요청에 함께 보냅니다. 모델은 이 스키마를 보고 "이 도구를 이런 인자로 부르면 되겠다"고 판단해 응답합니다. **`get_weather` 함수는 이 단계에서 한 번도 실행되지 않습니다.**
+
+```python
+AIMessage(
+    content="",   # 보통 비어 있음
+    tool_calls=[{
+        "name": "get_weather",
+        "args": {"city": "서울"},
+        "id": "call_abc123",
+        "type": "tool_call",
+    }]
+)
+```
+
+## 2. `ToolNode`: 실제로 실행하기
+
+```python
+tool_node = ToolNode([get_weather])
+result = tool_node.invoke({"messages": [ai_msg]})
+```
+
+`ToolNode`는 `messages`의 **마지막 AIMessage**에서 `tool_calls`를 꺼냅니다. 그다음 `get_weather(city="서울")`을 진짜로 호출하고, 반환값을 `ToolMessage`로 감싸서 돌려줍니다.
+
+```python
+{"messages": [
+    ToolMessage(
+        content="서울은 맑음, 15도",
+        name="get_weather",
+        tool_call_id="call_abc123",   # 어떤 호출에 대한 결과인지 연결
+    )
+]}
+```
+
+## 비교
+
+||`bind_tools` + `invoke`|`ToolNode.invoke`|
+|---|---|---|
+|하는 일|어떤 도구를 어떤 인자로 부를지 결정|그 결정대로 함수를 실행|
+|LLM 호출|함|안 함|
+|함수 실행|안 함|함|
+|입력|사용자 질문(메시지)|`tool_calls`가 들어 있는 AIMessage|
+|출력|`AIMessage` (`tool_calls` 포함)|`{"messages": [ToolMessage, ...]}`|
+|소속|langchain-core|langgraph (`langgraph.prebuilt`)|
+
+## ToolNode가 대신 해주는 일
+
+손으로 실행하면 이렇게 됩니다.
+
+```python
+tool_msgs = [get_weather.invoke(call) for call in ai_msg.tool_calls]
+# tool_call 전체를 넘기면 ToolMessage가 바로 반환됨
+```
+
+`ToolNode`는 이 작업에 몇 가지를 더해 줍니다.
+
+- **병렬 실행**: `tool_calls`가 여러 개면 동시에 실행합니다.
+- **에러 처리**: 도구에서 예외가 나도 그래프를 멈추지 않습니다. 에러 내용을 `ToolMessage`로 돌려줘서 모델이 다시 시도할 수 있게 합니다(`handle_tool_errors=True`가 기본값).
+- **이름 매칭**: 여러 도구 중 `tool_calls`의 `name`에 맞는 함수를 골라 실행합니다.
+- **그래프 상태 주입**: `InjectedState`, `InjectedStore`로 그래프 상태를 도구에 넘길 수 있습니다.
+
+## 둘을 이어 붙인 전체 흐름
+
+두 단계만으로는 사용자에게 줄 답이 아직 없습니다. 도구 결과를 다시 모델에 넣어야 자연어 답변이 나옵니다.
+
+```python
+from langchain_core.messages import HumanMessage
+
+messages = [HumanMessage("서울 날씨 알려줘")]
+
+ai_msg = model_with_tools.invoke(messages)         # ① 호출 계획
+messages.append(ai_msg)
+
+tool_result = tool_node.invoke({"messages": messages})  # ② 실행
+messages.extend(tool_result["messages"])
+
+final = model_with_tools.invoke(messages)          # ③ 결과를 보고 답변 작성
+print(final.content)  # "서울은 현재 맑고 기온은 15도입니다."
+```
+
+③에서 넘기는 `messages`는 `[Human, AI(tool_calls), Tool]` 순서를 지켜야 합니다. `ToolMessage` 앞에 그 `tool_call_id`를 가진 AIMessage가 없으면 OpenAI API가 에러를 냅니다.
+
+모델이 도구를 부르지 않기로 할 수도 있습니다(`ai_msg.tool_calls`가 빈 리스트). 그래서 LangGraph에서는 보통 `tools_condition`으로 "`tool_calls`가 있으면 ToolNode로, 없으면 종료"하도록 분기합니다. 이 ①→②→③ 반복을 그래프로 만든 것이 ReAct 에이전트입니다.
