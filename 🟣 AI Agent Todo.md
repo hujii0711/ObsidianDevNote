@@ -36,6 +36,7 @@
 - 이미지 모델도 언어모델처럼 서버로 초기화
 - 쇼츠 생성 중 작업 진행율 보여주기
 - sqllite --> mongoDB
+- Tavliy extract를 WebBaseLoader로 대체 검증(p.287)
 ---
 ### 문법
 
